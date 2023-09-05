@@ -14,3 +14,17 @@ class AutoServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = AutoService
         fields = '__all__'
+
+
+class AutoServiceFromGeoSerializer(serializers.ModelSerializer):
+
+    geo_size = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AutoService
+        fields = [
+
+        ]
+
+    def get_geo_size(self, obj):
+        return 1

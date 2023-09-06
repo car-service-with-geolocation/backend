@@ -3,6 +3,9 @@ from .models import Company, AutoService
 
 
 class CompanyAdmin(admin.ModelAdmin):
+    """
+    Кастомизация модели Company в админ панеле.
+    """
     list_display = (
         'name',
         'slug',
@@ -14,6 +17,9 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
 class AutoServiceAdmin(admin.ModelAdmin):
+    """
+    Кастомизация модели AutoService в админ панеле.
+    """
     list_display = (
         'company',
         'latitude',

@@ -4,7 +4,10 @@ from core.utils import get_geoip_from_request
 
 
 class MyGeoIPApiView(views.APIView):
-
+    """
+    ApiView для получения текущей геолокации клиента.
+    Геолокация берется по IP из request.
+    """
     def get(self, request):
         geoip = get_geoip_from_request(request)
         if geoip is None:

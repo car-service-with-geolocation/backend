@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
+    'cars',
+    'colorfield',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Константы
+MAX_LENGTH_TRANSPORT_BRAND = 150
+MAX_LENGTH_TRANSPORT_MODEL = 150
+MAX_LENGTH_VIN = 17
+MAX_LENGTH_NUMBER_OF_CAR = 9
+MAX_LENGTH_ODOMETR = 10

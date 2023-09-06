@@ -1,5 +1,5 @@
 from django.contrib.gis.geoip2 import GeoIP2
-from car_service.settings import DEBUG
+from django.conf import settings
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -22,7 +22,7 @@ def get_geoip_from_request(request):
     g = GeoIP2()
     ip = get_client_ip(request)
     try:
-        if DEBUG:
+        if settings.DEBUG:
             # Тестовый ip для Москвы
             return g.city('83.220.236.105')
         return g.city(ip)

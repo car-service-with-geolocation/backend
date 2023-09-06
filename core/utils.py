@@ -4,6 +4,9 @@ from math import radians, cos, sin, asin, sqrt
 
 
 def get_client_ip(request):
+    """
+    Получение IP адреса клиента из request.
+    """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
@@ -13,6 +16,9 @@ def get_client_ip(request):
 
 
 def get_geoip_from_request(request):
+    """
+    Получение геолокации клиента из request по IP.
+    """
     g = GeoIP2()
     ip = get_client_ip(request)
     try:
@@ -25,6 +31,10 @@ def get_geoip_from_request(request):
 
 
 def calc_autoservice_distance_for_user(la1, la2, lo1, lo2):
+    """
+    Расчет растояние между двумя точками на карте.
+    la - latitude, lo - longitude.
+    """
     lo1 = radians(lo1)
     lo2 = radians(lo2)
     la1 = radians(la1)

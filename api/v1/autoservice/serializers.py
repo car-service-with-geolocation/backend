@@ -4,14 +4,20 @@ from core.utils import calc_autoservice_distance_for_user
 
 
 class CompanySerializer(serializers.ModelSerializer):
-
+    """
+    Сериализатор для компаний автосервисов.
+    """
     class Meta:
         model = Company
         fields = '__all__'
 
 
 class AutoServiceSerializer(serializers.ModelSerializer):
-
+    """
+    Сериализатор для автосервисов с геолокацией.
+    Имеет присебе расчет расстояния до каждого
+    автосервиса от текущего положения клиента.
+    """
     company = serializers.SlugRelatedField(
         slug_field='name',
         queryset=Company.objects.all()
@@ -29,6 +35,9 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         ]
 
     def get_geo_size(self, obj):
+        """
+        Расчет растояния от клиента до сервиса.
+        """
         la = float(self.context['request'].query_params['latitude'])
         lo = float(self.context['request'].query_params['longitude'])
         return calc_autoservice_distance_for_user(

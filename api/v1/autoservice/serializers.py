@@ -14,6 +14,25 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class AutoServiceSerializer(serializers.ModelSerializer):
     """
+    Сериализатор для автосервисов.
+    """
+    company = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Company.objects.all()
+    )
+
+    class Meta:
+        model = AutoService
+        fields = [
+            'company',
+            'latitude',
+            'longitude',
+            'address',
+        ]
+
+
+class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
+    """
     Сериализатор для автосервисов с геолокацией.
     Имеет присебе расчет расстояния до каждого
     автосервиса от текущего положения клиента.

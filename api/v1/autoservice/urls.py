@@ -10,5 +10,10 @@ router.register(
 )
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path(
+        'service/',
+        views.AutoServiceFromGeoIPApiView.as_view(),
+        name='service'
+    )
 ]

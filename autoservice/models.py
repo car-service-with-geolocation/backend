@@ -1,6 +1,20 @@
 from django.db import models
 
 
+class City(models.Model):
+    """Данные городов с их координатами."""
+    rus_name = models.CharField(
+        'Город на русском языке',
+        max_length=255
+    )
+    latitude = models.FloatField(
+        'Значение северной широты на карте'
+    )
+    longitude = models.FloatField(
+        'Значение восточной долготы на карте'
+    )
+
+
 class Company(models.Model):
     """
     Класс для хранения информации о компаниях,
@@ -49,6 +63,12 @@ class AutoService(models.Model):
     )
     longitude = models.FloatField(
         verbose_name="Значение восточной долготы на карте",
+    )
+    city = models.ForeignKey(
+        'Город',
+        City,
+        on_delete=models.CASCADE,
+        help_text='Укажите город'
     )
 
     class Meta:

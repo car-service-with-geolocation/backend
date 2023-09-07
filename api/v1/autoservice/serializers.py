@@ -51,6 +51,7 @@ class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
             'longitude',
             'address',
             'geo_size',
+            'city',
         ]
 
     def get_geo_size(self, obj):

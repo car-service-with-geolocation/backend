@@ -26,13 +26,16 @@ class AutoServiceFromGeoIPApiView(views.APIView):
         if (
             'latitude' in request.query_params
             and 'longitude' in request.query_params
+            and 'city' in request.query_params
             and request.query_params['latitude'].isnumeric()
             and request.query_params['longitude'].isnumeric()
         ):
             return Response(
                 sorted(
                     AutoServiceGeoIPSerializer(
-                        AutoService.objects.all(),
+                        AutoService
+                        .objects
+                        .filter(city=request.query_params['city']),
                         context={"request": request},
                         many=True
                     ).data,

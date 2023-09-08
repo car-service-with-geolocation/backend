@@ -22,20 +22,21 @@ class AutoServiceFromGeoIPApiView(views.APIView):
     Автосервисы отсортированы по расстоянию до клиента.
     """
     def get(self, request):
-
+        queryset = AutoService.objects.all()
+        if 'city' in request.query_params:
+            queryset = AutoService.objects.filter(
+                city=request.query_params['city']
+            )
         if (
             'latitude' in request.query_params
             and 'longitude' in request.query_params
-            and 'city' in request.query_params
             and request.query_params['latitude'].isnumeric()
             and request.query_params['longitude'].isnumeric()
         ):
             return Response(
                 sorted(
                     AutoServiceGeoIPSerializer(
-                        AutoService
-                        .objects
-                        .filter(city=request.query_params['city']),
+                        queryset,
                         context={"request": request},
                         many=True
                     ).data,
@@ -45,7 +46,7 @@ class AutoServiceFromGeoIPApiView(views.APIView):
             )
         return Response(
             AutoServiceSerializer(
-                AutoService.objects.all(),
+                queryset,
                 many=True
             ).data,
             status=status.HTTP_200_OK

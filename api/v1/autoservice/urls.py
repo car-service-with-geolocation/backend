@@ -9,6 +9,12 @@ router.register(
     basename='company'
 )
 
+router.register(
+    r'(?P<autoservice_id>\d+)/feedbacks',
+    views.FeedbackViewSet,
+    basename='feedbacks'
+)
+
 urlpatterns = [
     path('', include(router.urls)),
     path(

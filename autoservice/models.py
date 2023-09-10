@@ -65,9 +65,9 @@ class AutoService(models.Model):
         verbose_name="Значение восточной долготы на карте",
     )
     city = models.ForeignKey(
-        'Город',
         City,
         on_delete=models.CASCADE,
+        verbose_name='Город',
         help_text='Укажите город'
     )
 

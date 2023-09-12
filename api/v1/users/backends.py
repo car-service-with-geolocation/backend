@@ -1,3 +1,4 @@
+# Бекэнд кастомной авторизации пользователя - находится в разработке
 # from users.models import CustomUser
 # from django.db.models import Q
 # from django.contrib.auth.backends import ModelBackend

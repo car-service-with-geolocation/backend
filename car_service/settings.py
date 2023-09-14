@@ -6,17 +6,15 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG') == 'True'
+
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1 localhost').split()
 
 
 INSTALLED_APPS = [
-    'autoservice.apps.AutoserviceConfig',
-    'core.apps.CoreConfig',
-    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,10 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'djoser',
     'django_filters',
-    'cars',
     'colorfield',
+
+    'users.apps.UsersConfig',
+    'autoservice.apps.AutoserviceConfig',
+    'cars',
+    'core.apps.CoreConfig',
+    'api.apps.ApiConfig',
     'feedback',
+
 ]
 
 MIDDLEWARE = [
@@ -41,7 +46,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'car_service.urls'
+
 GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -58,8 +65,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'car_service.wsgi.application'
 
+
+WSGI_APPLICATION = 'car_service.wsgi.application'
 
 if os.getenv('DEVELOPMENT', 'True') == 'True':
     DATABASES = {
@@ -81,6 +89,38 @@ else:
     }
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+DJOSER = {
+    "SERIALIZERS": {
+        'user': 'api.v1.users.serializers.CustomUserSerializer',
+        'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    },
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'TOKEN_MODEL': None, 
+    'ACTIVATION_URL': 'v1/auth/users/activation/{uid}/{token}/',
+}
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -97,6 +137,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+if os.getenv('DEVELOPMENT') == 'True':
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.yandex.ru'
+    EMAIL_PORT = 465
+    EMAIL_HOST_USER = 'todo'
+    EMAIL_HOST_PASSWORD = 'todo'
+    EMAIL_USE_SSL = True
+    DEFAULT_FROM_EMAIL = 'some_service_email'
+
+AUTH_USER_MODEL = 'users.CustomUser'
+ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
+
+
+# Internationalization
+
 LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
@@ -107,6 +165,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
 
@@ -119,3 +179,10 @@ MAX_LENGTH_TRANSPORT_MODEL = 150
 MAX_LENGTH_VIN = 17
 MAX_LENGTH_NUMBER_OF_CAR = 9
 MAX_LENGTH_ODOMETR = 10
+
+# Константы users.apps
+USERNAME_MAX_LENGTH = 40
+EMAIL_MAX_LENGTH = 80
+PHONE_MAX_LENGTH = 12
+FIRST_NAME_MAX_LENGTH = 40
+LAST_NAME_MAX_LENGTH = 40

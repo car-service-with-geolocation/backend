@@ -3,16 +3,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1 localhost').split()
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,11 +25,14 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'colorfield',
+
     'users.apps.UsersConfig',
     'autoservice.apps.AutoserviceConfig',
     'cars',
     'core.apps.CoreConfig',
     'api.apps.ApiConfig',
+    'feedback',
+
 ]
 
 MIDDLEWARE = [
@@ -43,7 +46,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'car_service.urls'
-GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip')
 
 TEMPLATES = [
     {
@@ -60,6 +64,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 
 WSGI_APPLICATION = 'car_service.wsgi.application'
@@ -115,6 +120,7 @@ DJOSER = {
     'ACTIVATION_URL': 'v1/auth/users/activation/{uid}/{token}/',
 }
 
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -163,6 +169,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # Константы
 MAX_LENGTH_TRANSPORT_BRAND = 150

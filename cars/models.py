@@ -23,7 +23,10 @@ class Transport(models.Model):
     class Meta: 
         ordering = ('brand', ) 
         verbose_name = 'Транспорт' 
-        verbose_name_plural = 'Транспорты' 
+        verbose_name_plural = 'Транспорты'
+        constraints = [models.UniqueConstraint( 
+                       fields=('brand', 'model'), 
+                       name='unique_transport')]
  
     def __str__(self): 
         return f'{self.brand}, {self.model}'

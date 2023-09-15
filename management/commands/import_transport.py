@@ -9,7 +9,7 @@ from cars.models import Transport
  
 def process_file(name: str): 
     return csv.reader(open(os.path.join( 
-        settings.BASE_DIR, 'cars/data/', name), 
+        settings.BASE_DIR, 'static/data/', name), 
         'r', encoding='utf-8'), delimiter=',') 
  
  

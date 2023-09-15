@@ -9,25 +9,29 @@ from users.models import CustomUser as User
 
 class Transport(models.Model):
     """Модель для базы данных брендов/моделей авто"""
-    brand = models.CharField(
-        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
-        verbose_name='Название бренда'
-    )
-    model = models.CharField(
-        max_length=settings.MAX_LENGTH_TRANSPORT_MODEL,
-        verbose_name='Название модели'
-    )
-    image = models.ImageField(
-        'Изображение автомобиля',
-        upload_to='transports/'
-    )
 
-    class Meta:
-        ordering = ('brand', )
-        verbose_name = 'Транспорт'
+    brand = models.CharField( 
+        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND, 
+        verbose_name='Название бренда' 
+    ) 
+    model = models.CharField( 
+        max_length=settings.MAX_LENGTH_TRANSPORT_MODEL, 
+        verbose_name='Название модели' 
+    ) 
+    image = models.ImageField( 
+        'Изображение автомобиля', 
+        upload_to='transports/'  
+    ) 
+ 
+    class Meta: 
+        ordering = ('brand', ) 
+        verbose_name = 'Транспорт' 
         verbose_name_plural = 'Транспорты'
-
-    def __str__(self):
+        constraints = [models.UniqueConstraint( 
+                       fields=('brand', 'model'), 
+                       name='unique_transport')]
+ 
+    def __str__(self): 
         return f'{self.brand}, {self.model}'
 
 

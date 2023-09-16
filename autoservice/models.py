@@ -1,4 +1,19 @@
 from django.db import models
+    
+
+class GeolocationCity(models.Model):
+    """
+    Модель с геолокацией городов.
+    """
+    latitude = models.FloatField(
+        verbose_name="Значение северной широты на карте",
+    )
+    longitude = models.FloatField(
+        verbose_name="Значение восточной долготы на карте",
+    )
+
+    def __str__(self):
+        return f"{self.latitude} - {self.longitude}"
 
 
 class City(models.Model):
@@ -7,12 +22,15 @@ class City(models.Model):
         'Город на русском языке',
         max_length=255
     )
-    latitude = models.FloatField(
-        'Значение северной широты на карте'
+    geolocation = models.ForeignKey(
+        GeolocationCity,
+        on_delete=models.CASCADE,
+        verbose_name="Геолокация города",
+        help_text="Укажите геолокацию города"
     )
-    longitude = models.FloatField(
-        'Значение восточной долготы на карте'
-    )
+
+    def __str__(self):
+        return f"{self.rus_name}"
 
 
 class Company(models.Model):
@@ -28,6 +46,11 @@ class Company(models.Model):
     description = models.TextField(
         verbose_name="Описание компании",
     )
+    logo = models.ImageField(
+        'Логотип компании', 
+        upload_to='logo_companys/',
+        null=True,
+    )
     slug = models.SlugField()
     legal_address = models.CharField(
         max_length=250,
@@ -40,12 +63,26 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+
+class GeolocationAutoService(models.Model):
+    """
+    Модель с геолокацией автосервисов.
+    """
+    latitude = models.FloatField(
+        verbose_name="Значение северной широты на карте",
+    )
+    longitude = models.FloatField(
+        verbose_name="Значение восточной долготы на карте",
+    )
+
+    def __str__(self):
+        return f"{self.latitude} - {self.longitude}"
 
 
 class AutoService(models.Model):
     """
     Модель для хранения данных об автосервисах.
-    Содержит в себе адрес и местоположение на карте.
     """
     company = models.ForeignKey(
         Company,
@@ -58,11 +95,11 @@ class AutoService(models.Model):
         verbose_name="Адрес автосервиса",
         help_text="Укажите адрес автосервиса"
     )
-    latitude = models.FloatField(
-        verbose_name="Значение северной широты на карте",
-    )
-    longitude = models.FloatField(
-        verbose_name="Значение восточной долготы на карте",
+    geolocation = models.ForeignKey(
+        GeolocationAutoService,
+        on_delete=models.CASCADE,
+        verbose_name="Геолокация автосервиса",
+        help_text="Укажите геолокацию автосервиса"
     )
     city = models.ForeignKey(
         City,
@@ -77,6 +114,6 @@ class AutoService(models.Model):
 
     def __str__(self):
         return (
-            f"{self.company.name} "
-            f"{self.latitude} - {self.longitude}"
+            f"{self.company.name} - "
+            f"{self.geolocation}"
         )

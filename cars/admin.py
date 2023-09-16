@@ -12,5 +12,5 @@ class CarsAdmin(admin.ModelAdmin):
 @admin.register(Transport) 
 class TransportAdmin(admin.ModelAdmin):
     list_display = ('id', 'brand', 'model') 
-    list_filter = ('owner',) 
-    search_fields = ('owner',)
+    list_filter = ('brand',) 
+    search_fields = ('brand',)

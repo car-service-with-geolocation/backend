@@ -28,9 +28,7 @@ class AutoServiceFromGeoIPApiView(views.APIView):
     Автосервисы отсортированы по расстоянию до клиента.
     """
     def get(self, request):
-        queryset = AutoService.objects.all().annotate(
-            rating=Avg('feedback_score')
-        )
+        queryset = AutoService.objects.all()
         if 'city' in request.query_params:
             queryset = AutoService.objects.filter(
                 city=request.query_params['city']
@@ -41,6 +39,7 @@ class AutoServiceFromGeoIPApiView(views.APIView):
             and request.query_params['latitude'].isnumeric()
             and request.query_params['longitude'].isnumeric()
         ):
+            print(1)
             return Response(
                 sorted(
                     AutoServiceGeoIPSerializer(

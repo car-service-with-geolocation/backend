@@ -1,3 +1,4 @@
+from core.utils import is_float
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 
@@ -32,14 +33,13 @@ class AutoServiceFromGeoIPApiView(views.APIView):
         if 'city' in request.query_params:
             queryset = AutoService.objects.filter(
                 city=request.query_params['city']
-            ).annotate(rating=Avg('feedback_score'))
+            ).all()
         if (
             'latitude' in request.query_params
             and 'longitude' in request.query_params
-            and request.query_params['latitude'].isnumeric()
-            and request.query_params['longitude'].isnumeric()
+            and is_float(request.query_params['latitude'])
+            and is_float(request.query_params['longitude'])
         ):
-            print(1)
             return Response(
                 sorted(
                     AutoServiceGeoIPSerializer(

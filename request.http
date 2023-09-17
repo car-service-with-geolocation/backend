@@ -1,0 +1,10 @@
+@service = http://127.0.0.1:8000/api/v1/autoservice/service/
+@filter_service = http://127.0.0.1:8000/api/v1/autoservice/service/?latitude=50.5&longitude=50.5
+
+###
+GET {{ service }} HTTP/1.1
+content-type: application/json
+
+###
+GET {{ filter_service }} HTTP/1.1
+content-type: application/json

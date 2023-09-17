@@ -2,7 +2,12 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 
-from autoservice.models import Company, AutoService
+from autoservice.models import (
+    AutoService,
+    Company,
+    City,
+    GeolocationAutoService,
+)
 from feedback.models import Feedback
 from core.utils import calc_autoservice_distance_for_user
 
@@ -13,29 +18,55 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Company
-        fields = '__all__'
+        fields = ['name', 'description', 'logo', 'slug', 'legal_address']
+
+
+class GeolocationAutoServiceSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для геолокации автосервиса.
+    """
+    class Meta:
+        model = GeolocationAutoService
+        fields = ['latitude', 'longitude']
 
 
 class AutoServiceSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для автосервисов.
+    Сериализатор для списка автосервисов.
     """
-    company = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Company.objects.all()
+    company = CompanySerializer()
+    geolocation = GeolocationAutoServiceSerializer()
+    city = serializers.SlugRelatedField(
+        queryset=City.objects.all(),
+        slug_field='rus_name',
     )
-    rating = serializers.IntegerField()
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = AutoService
         fields = [
             'company',
-            'latitude',
-            'longitude',
+            'city',
             'address',
+            'geolocation',
             'rating',
         ]
 
+    def get_rating(self, obj):
+        return 0
+
+
+class GetServiceFromUserSerializer(serializers.Serializer):
+    usr_lat = serializers.FloatField(write_only=True)
+    usr_long = serializers.FloatField(write_only=True)
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        return AutoServiceSerializer(
+            AutoService.objects.all(),
+            instance,
+            context={'request': request}
+        ).data
 
 class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
     """
@@ -43,24 +74,28 @@ class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
     Имеет присебе расчет расстояния до каждого
     автосервиса от текущего положения клиента.
     """
-    company = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Company.objects.all()
+    company = CompanySerializer()
+    geolocation = GeolocationAutoServiceSerializer()
+    city = serializers.SlugRelatedField(
+        slug_field='rus_name',
+        queryset=City.objects.all()
     )
     geo_size = serializers.SerializerMethodField()
-    rating = serializers.IntegerField()
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = AutoService
         fields = [
             'company',
-            'latitude',
-            'longitude',
-            'address',
-            'geo_size',
             'city',
+            'address',
+            'geolocation',
+            'geo_size',
             'rating',
         ]
+
+    def get_rating(self, obj):
+        return 0
 
     def get_geo_size(self, obj):
         """
@@ -69,7 +104,7 @@ class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
         la = float(self.context['request'].query_params['latitude'])
         lo = float(self.context['request'].query_params['longitude'])
         return calc_autoservice_distance_for_user(
-            la, obj.latitude, lo, obj.longitude
+            la, obj.geolocation.latitude, lo, obj.geolocation.longitude
         )
 
 

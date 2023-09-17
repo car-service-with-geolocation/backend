@@ -38,7 +38,7 @@ class Feedback(models.Model):
         verbose_name_plural = 'Отзывы'
         constraints = [
             models.UniqueConstraint(
-                fields=['author', 'auto_service'], name='unique_feedback'
+                fields=['author', 'autoservice'], name='unique_feedback'
             )
         ]
 

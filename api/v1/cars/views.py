@@ -2,9 +2,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, viewsets 
 from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS 
  
-from cars.filters import TransportsFilter
-from cars.permissions import IsOwnerOrReadOnly 
-from cars.serializers import CarsSerializer, TransportsSerializer
+from .filters import TransportsFilter
+from .permissions import IsOwnerOrReadOnly 
+from .serializers import CarsSerializer, TransportsSerializer
 from cars.models import Cars, Transport
 
 

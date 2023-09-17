@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Company, AutoService
+from .models import (
+    AutoService,
+    Company,
+    City,
+    GeolocationAutoService,
+    GeolocationCity,
+)
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -16,14 +22,43 @@ class CompanyAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class CityAdmin(admin.ModelAdmin):
+    """
+    Кастомизация модели City в админ панеле.
+    """
+    list_display = (
+        'rus_name', 'geolocation'
+    )
+    search_fields = (
+        'rus_name',
+    )
+
+
+class GeolocationAutoServiceAdmin(admin.ModelAdmin):
+    """
+    Кастомизация модели GeolocationAutoService в админ панеле.
+    """
+    list_display = (
+        'latitude', 'longitude'
+    )
+
+
+class GeolocationCityAdmin(admin.ModelAdmin):
+    """
+    Кастомизация модели геолокации города в админ панеле.
+    """
+    list_display = (
+        'latitude', 'longitude'
+    )
+
+
 class AutoServiceAdmin(admin.ModelAdmin):
     """
     Кастомизация модели AutoService в админ панеле.
     """
     list_display = (
         'company',
-        'latitude',
-        'longitude',
+        'geolocation',
     )
     search_fields = (
         'company',
@@ -32,4 +67,13 @@ class AutoServiceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(City, CityAdmin)
 admin.site.register(AutoService, AutoServiceAdmin)
+admin.site.register(
+    GeolocationAutoService,
+    GeolocationAutoServiceAdmin
+)
+admin.site.register(
+    GeolocationCity,
+    GeolocationCityAdmin,
+)

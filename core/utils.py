@@ -3,6 +3,14 @@ from django.conf import settings
 from math import radians, cos, sin, asin, sqrt
 
 
+def is_float(str_num: str) -> bool:
+    try:
+        float(str_num)
+        return True
+    except ValueError:
+        return False
+
+
 def get_client_ip(request):
     """
     Получение IP адреса клиента из request.

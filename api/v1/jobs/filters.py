@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, filters 
  
-from jobs.models import Jobs
+from autoservice.models import Job
 
 class JobsFilter(FilterSet): 
     name = filters.CharFilter(
@@ -9,5 +9,5 @@ class JobsFilter(FilterSet):
     )
  
     class Meta: 
-        model = Jobs 
+        model = Job
         fields = ('name', ) 

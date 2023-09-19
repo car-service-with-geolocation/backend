@@ -4,16 +4,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS
  
 from .filters import JobsFilter
 from .serializers import JobsSerializer
-from jobs.models import Jobs
+from autoservice.models import Job
 
 
 class JobsList(generics.ListAPIView):
-    queryset = Jobs.objects.all()
+    queryset = Job.objects.all()
     serializer_class = JobsSerializer
     filter_backends = (filters.SearchFilter, DjangoFilterBackend) 
     filterset_class = JobsFilter 
     search_fields = ('name', )
 
 class JobsDetail(generics.RetrieveAPIView):
-    queryset = Jobs.objects.all()
+    queryset = Job.objects.all()
     serializer_class = JobsSerializer

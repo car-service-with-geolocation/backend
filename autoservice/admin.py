@@ -5,6 +5,8 @@ from .models import (
     City,
     GeolocationAutoService,
     GeolocationCity,
+    Job,
+    AutoserviceJob,
 )
 
 
@@ -13,11 +15,11 @@ class CompanyAdmin(admin.ModelAdmin):
     Кастомизация модели Company в админ панеле.
     """
     list_display = (
-        'name',
-        'slug',
+        'title',
+        'legal_address',
     )
     search_fields = (
-        'name',
+        'title',
     )
     empty_value_display = '-пусто-'
 
@@ -66,9 +68,6 @@ class AutoServiceAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-admin.site.register(Company, CompanyAdmin)
-admin.site.register(City, CityAdmin)
-admin.site.register(AutoService, AutoServiceAdmin)
 admin.site.register(
     GeolocationAutoService,
     GeolocationAutoServiceAdmin
@@ -77,3 +76,8 @@ admin.site.register(
     GeolocationCity,
     GeolocationCityAdmin,
 )
+admin.site.register(Company, CompanyAdmin)
+admin.site.register(City, CityAdmin)
+admin.site.register(AutoService, AutoServiceAdmin)
+admin.site.register(AutoserviceJob)
+admin.site.register(Job)

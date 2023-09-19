@@ -3,7 +3,7 @@ from .autoservice import urls as urls_autoservice
 from .core import urls as urls_core
 from .cars import urls as urls_cars
 from .users import urls as urls_users
-
+from .jobs import urls as urls_jobs
 
 urlpatterns = [
     path('auth/', include('djoser.urls')),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('core/', include(urls_core)),
     path('car/', include(urls_cars)),
     path('users/', include(urls_users)),
+    path('jobs/', include(urls_jobs)),
 ]

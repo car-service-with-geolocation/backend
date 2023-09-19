@@ -13,7 +13,7 @@ class TransportList(generics.ListAPIView):
     serializer_class = TransportsSerializer
     filter_backends = (filters.SearchFilter, DjangoFilterBackend) 
     filterset_class = TransportsFilter 
-    search_fields = ('brand', 'model')
+    search_fields = ('brand', )
 
 class TransportDetail(generics.RetrieveAPIView):
     queryset = Transport.objects.all()

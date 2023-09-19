@@ -13,26 +13,30 @@ class Transport(models.Model):
     brand = models.CharField( 
         max_length=settings.MAX_LENGTH_TRANSPORT_BRAND, 
         verbose_name='Название бренда' 
-    ) 
-    model = models.CharField( 
-        max_length=settings.MAX_LENGTH_TRANSPORT_MODEL, 
-        verbose_name='Название модели' 
-    ) 
-    image = models.ImageField( 
-        'Изображение автомобиля', 
-        upload_to='transports/'  
-    ) 
+    )
+    slug = models.CharField( 
+        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG, 
+        verbose_name='Уникальный Slug' 
+    )
+    # model = models.CharField( 
+    #     max_length=settings.MAX_LENGTH_TRANSPORT_MODEL, 
+    #     verbose_name='Название модели' 
+    # ) 
+    # image = models.ImageField( 
+    #     'Изображение автомобиля', 
+    #     upload_to='transports/'  
+    # ) 
  
     class Meta: 
         ordering = ('brand', ) 
-        verbose_name = 'Транспорт' 
-        verbose_name_plural = 'Транспорты'
-        constraints = [models.UniqueConstraint( 
-                       fields=('brand', 'model'), 
-                       name='unique_transport')]
+        verbose_name = 'Бренд' 
+        verbose_name_plural = 'Бренды'
+        # constraints = [models.UniqueConstraint( 
+        #                fields=('brand', 'model'), 
+        #                name='unique_transport')]
  
     def __str__(self): 
-        return f'{self.brand}, {self.model}'
+        return f'{self.brand}'
 
 
 class Cars(models.Model):

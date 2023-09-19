@@ -9,7 +9,7 @@ class TransportsSerializer(serializers.ModelSerializer):
     """Сериализатор для списка брендов/моделей автомобилей""" 
     class Meta: 
         model = Transport 
-        fields = ('id', 'brand', 'model', 'image') 
+        fields = ('id', 'brand', 'slug') 
 
 
 class CarsSerializer(serializers.ModelSerializer):

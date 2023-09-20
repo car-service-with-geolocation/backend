@@ -11,7 +11,6 @@ from autoservice.models import (
 )
 from api.v1.cars.serializers import TransportsSerializer
 # from feedback.models import Feedback
-from core.utils import calc_autoservice_distance_for_user
 
 
 class CompanySerializer(serializers.ModelSerializer):

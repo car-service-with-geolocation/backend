@@ -204,22 +204,22 @@ class AutoService(models.Model):
             )
         ],
         help_text="Введите номер телефона",
-        unique=True,
+        #unique=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
-        unique=True,
+        #unique=True,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
-        error_messages={
-            'unique': 'Автосервис с такой почтой уже существует',
-        },
+        #error_messages={
+        #    'unique': 'Автосервис с такой почтой уже существует',
+        #},
     )
     site = models.CharField(
         verbose_name='Сайт автосервиса',
         max_length=settings.EMAIL_MAX_LENGTH,
-        unique=True,
+        #unique=True,
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"
         ),

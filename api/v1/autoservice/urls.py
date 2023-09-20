@@ -1,20 +1,13 @@
 from . import views
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
-router = DefaultRouter()
-
+router = SimpleRouter()
 router.register(
     r'company',
     views.CompanyViewset,
     basename='company'
 )
-
-# router.register(
-#     r'(?P<autoservice_id>\d+)/feedbacks',
-#     views.FeedbackViewSet,
-#     basename='feedbacks'
-# )
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -25,7 +18,7 @@ urlpatterns = [
     ),
     path(
         'service/<int:id>/',
-        views.RetriveautoServiceApiView.as_view(),
+        views.RetriveAutoServiceApiView.as_view(),
         name='service-id'
     )
 ]

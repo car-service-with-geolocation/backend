@@ -10,7 +10,6 @@ from autoservice.models import Company, AutoService
 # from feedback.models import Feedback
 from .serializers import (
     AutoServiceSerializer,
-    AutoServiceGeoIPSerializer,
     CompanySerializer,
     # FeedbackSerializer,
 )
@@ -24,7 +23,7 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Company.objects.all()
 
 
-class RetriveautoServiceApiView(views.APIView):
+class RetriveAutoServiceApiView(views.APIView):
 
     def get(self, request, id):
         queryset = get_object_or_404(AutoService, id=id)

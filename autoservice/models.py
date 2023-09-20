@@ -223,14 +223,14 @@ class AutoService(models.Model):
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"
         ),
-        validators=[
-            RegexValidator(
-                r'^(https?|ftp)://[^\s/$.?#].[^\s]*$$',
-                message=(
-                    "Ошибка ввода, используйте формат: 'www.example.com'"
-                )
-            )
-        ],
+        #validators=[
+        #    RegexValidator(
+        #        r'^(https?|ftp)://[^\s/$.?#].[^\s]*$$',
+        #        message=(
+        #            "Ошибка ввода, используйте формат: 'www.example.com'"
+        #        )
+        #    )
+        #],
     )
     job = models.ManyToManyField(
         Job,

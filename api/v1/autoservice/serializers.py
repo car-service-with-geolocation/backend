@@ -92,58 +92,6 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         return AutoserviceJobSerializer(job, many=True).data
 
 
-class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для автосервисов с геолокацией.
-    Имеет при себе расчет расстояния до каждого
-    автосервиса от текущего положения клиента.
-    """
-    company = CompanySerializer()
-    geolocation = GeolocationAutoServiceSerializer()
-    city = serializers.SlugRelatedField(
-        slug_field='rus_name',
-        queryset=City.objects.all()
-    )
-    car_service = TransportsSerializer(many=True)
-    job = serializers.SerializerMethodField()
-    geo_size = serializers.SerializerMethodField()
-
-    class Meta:
-        model = AutoService
-        fields = [
-            'id',
-            'company',
-            'geolocation',
-            'city',
-            'address',
-            'rating',
-            'votes',
-            'openfrom',
-            'openuntil',
-            'holidays',
-            'phone_number',
-            'email',
-            'site',
-            'car_service',
-            'job',
-            'geo_size',
-        ]
-
-    def get_job(self, obj):
-        job = AutoserviceJob.objects.filter(service=obj)
-        return AutoserviceJobSerializer(job, many=True).data
-
-    def get_geo_size(self, obj):
-        """
-        Расчет растояния от клиента до сервиса.
-        """
-        la = float(self.context['request'].query_params['latitude'])
-        lo = float(self.context['request'].query_params['longitude'])
-        return calc_autoservice_distance_for_user(
-            la, obj.geolocation.latitude, lo, obj.geolocation.longitude
-        )
-
-
 # class FeedbackSerializer(serializers.ModelSerializer):
 #     """Сериализатор для модели Feedback."""
 #     author = serializers.SlugRelatedField(

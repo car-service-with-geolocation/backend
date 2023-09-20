@@ -1,5 +1,6 @@
 from core.utils import is_float
-from django.db.models import Avg
+from django.db.models import Avg, F, Value
+from django.db.models.functions import Abs, Sqrt, Radians, Cos, Sin, ASin
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, views, status
@@ -23,34 +24,44 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Company.objects.all()
 
 
+class RetriveautoServiceApiView(views.APIView):
+
+    def get(self, request, id):
+        queryset = get_object_or_404(AutoService, id=id)
+        return Response(
+            AutoServiceSerializer(
+                queryset,
+                context={"request": request},
+            ).data,
+            status=status.HTTP_200_OK
+        )
+
+
 class AutoServiceFromGeoIPApiView(views.APIView):
     """
     ApiView для получения автосервисов.
     Автосервисы отсортированы по расстоянию до клиента.
     """
     def get(self, request):
-        queryset = AutoService.objects.all()
-        if 'city' in request.query_params:
-            queryset = AutoService.objects.filter(
-                city=request.query_params['city']
-            ).all()
+        queryset = AutoService.objects.select_related("geolocation").order_by('-rating')
+        #if 'city' in request.query_params:
+        #    queryset = AutoService.objects.filter(
+        #        city=request.query_params['city']
+        #    )
         if (
             'latitude' in request.query_params
             and 'longitude' in request.query_params
             and is_float(request.query_params['latitude'])
             and is_float(request.query_params['longitude'])
         ):
-            return Response(
-                sorted(
-                    AutoServiceGeoIPSerializer(
-                        queryset,
-                        context={"request": request},
-                        many=True
-                    ).data,
-                    key=lambda x: x['geo_size']
-                ),
-                status=status.HTTP_200_OK
-            )
+            lat = float(request.query_params['latitude'])
+            lon = float(request.query_params['longitude'])
+            queryset = queryset.annotate(
+                distance=Sqrt(
+                    Abs(F('geolocation__longitude') - lon)
+                    + Abs(F('geolocation__latitude') - lat)
+                )
+            ).order_by('distance', '-rating')
         return Response(
             AutoServiceSerializer(
                 queryset,

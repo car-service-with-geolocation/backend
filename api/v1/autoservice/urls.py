@@ -21,5 +21,10 @@ urlpatterns = [
         'service/',
         views.AutoServiceFromGeoIPApiView.as_view(),
         name='service'
+    ),
+    path(
+        'service/<int:id>/',
+        views.RetriveautoServiceApiView.as_view(),
+        name='service-id'
     )
 ]

@@ -12,9 +12,10 @@ class CustomUserSerializer(UserSerializer):
                   'email',
                   'username',
                   'telegram_id',
-                  'phone',
+                  'phone_number',
                   'first_name',
                   'last_name',
-                  'date_joined'
+                  'date_joined',
+                  'image'
                   )
 

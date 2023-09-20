@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     'djoser',
     'django_filters',
     'colorfield',
@@ -187,7 +188,7 @@ WORKING_TIME_MAX_LENGTH = 5
 # Константы users.apps
 USERNAME_MAX_LENGTH = 40
 EMAIL_MAX_LENGTH = 80
-PHONE_MAX_LENGTH = 12
+PHONE_MAX_LENGTH = 11
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
 

@@ -166,12 +166,12 @@ class AutoService(models.Model):
         help_text=(
             'Введите время начала рабочего дня автосервиса в формате HH:MM'
         ),
-        #validators=[
-        #    RegexValidator(
-        #        r'^#[0-9]{2}:[0-9]{2}$',
-        #        'Используйте время в формате HH:MM',
-        #    )
-        #],
+        validators=[
+           RegexValidator(
+               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+               'Используйте время в формате HH:MM',
+           )
+        ],
     )
     openuntil = models.CharField(
         verbose_name='Окончание рабочего дня',
@@ -180,12 +180,12 @@ class AutoService(models.Model):
         help_text=(
             'Введите время окончания рабочего дня автосервиса в формате HH:MM'
         ),
-        #validators=[
-        #    RegexValidator(
-        #        r'^#[0-9]{2}:[0-9]{2}$',
-        #        'Используйте время в формате HH:MM',
-        #    )
-        #],
+        validators=[
+           RegexValidator(
+               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+               'Используйте время в формате HH:MM',
+           )
+        ],
     )
     holidays = models.CharField(
         verbose_name='Выходной день',
@@ -196,19 +196,15 @@ class AutoService(models.Model):
         choices=settings.DAY_CHOICES
     )
     phone_number = models.CharField(
-        validators=[ 
+        max_length=settings.PHONE_MAX_LENGTH,
+        validators=[
             RegexValidator(
-                r'^\+?1?\d{9,12}$',
-                message="Ошибка ввода, используйте формат: '+79995553322'"
+                r'^(\+7|8)[0-9]{10}$',
+                "Введите номер телефона в формате: '+79995553322'",
             )
         ],
-        verbose_name='Номер телефона',
+        help_text="Введите номер телефона",
         unique=True,
-        null=True,
-        max_length=settings.PHONE_MAX_LENGTH,
-        help_text=(
-            'Введите номер телефона в формате +79995553322'
-        ),
     )
     email = models.EmailField(
         verbose_name='Электронная почта',

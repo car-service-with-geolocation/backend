@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'api.apps.ApiConfig',
     'feedback',
-    'jobs',
 ]
 
 MIDDLEWARE = [
@@ -183,6 +182,7 @@ MAX_LENGTH_JOBS_NAME = 150
 MAX_LENGTH_JOBS_DESCRIPTION = 150
 MAX_LENGTH_JOBS_PRICE = 5
 MAX_LENGTH_JOBS_SLUG = 150
+WORKING_TIME_MAX_LENGTH = 5
 
 # Константы users.apps
 USERNAME_MAX_LENGTH = 40
@@ -190,3 +190,14 @@ EMAIL_MAX_LENGTH = 80
 PHONE_MAX_LENGTH = 12
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
+
+# Константы autoservice.apps
+DAY_CHOICES = (
+    ('1', 'Понедельник'),
+    ('2', 'Вторник'),
+    ('3', 'Среда'),
+    ('4', 'Четверг'),
+    ('5', 'Пятница'),
+    ('6', 'Суббота'),
+    ('7', 'Воскресенье'),
+)

@@ -54,6 +54,7 @@ class AutoServiceFromGeoIPApiView(views.APIView):
         return Response(
             AutoServiceSerializer(
                 queryset,
+                context={"request": request},
                 many=True
             ).data,
             status=status.HTTP_200_OK

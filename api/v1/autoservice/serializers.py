@@ -7,7 +7,9 @@ from autoservice.models import (
     Company,
     City,
     GeolocationAutoService,
+    AutoserviceJob,
 )
+from api.v1.cars.serializers import TransportsSerializer
 from feedback.models import Feedback
 from core.utils import calc_autoservice_distance_for_user
 
@@ -18,7 +20,13 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Company
-        fields = ['name', 'description', 'logo', 'slug', 'legal_address']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'logo',
+            'legal_address',
+        ]
 
 
 class GeolocationAutoServiceSerializer(serializers.ModelSerializer):
@@ -30,6 +38,22 @@ class GeolocationAutoServiceSerializer(serializers.ModelSerializer):
         fields = ['latitude', 'longitude']
 
 
+class AutoserviceJobSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для работ автосервисов и их прайс.
+    """
+    id = serializers.IntegerField(source='job.id', read_only=True)
+    title = serializers.CharField(source='job.title', read_only=True)
+
+    class Meta:
+        model = AutoserviceJob
+        fields = [
+            'id',
+            'title',
+            'price',
+        ]
+
+
 class AutoServiceSerializer(serializers.ModelSerializer):
     """
     Сериализатор для списка автосервисов.
@@ -37,36 +61,36 @@ class AutoServiceSerializer(serializers.ModelSerializer):
     company = CompanySerializer()
     geolocation = GeolocationAutoServiceSerializer()
     city = serializers.SlugRelatedField(
-        queryset=City.objects.all(),
         slug_field='rus_name',
+        queryset=City.objects.all()
     )
-    rating = serializers.SerializerMethodField()
+    car_service = TransportsSerializer(many=True)
+    job = serializers.SerializerMethodField()
 
     class Meta:
         model = AutoService
         fields = [
+            'id',
             'company',
+            'geolocation',
             'city',
             'address',
-            'geolocation',
             'rating',
+            'votes',
+            'openfrom',
+            'openuntil',
+            'holidays',
+            'phone_number',
+            'email',
+            'site',
+            'car_service',
+            'job',
         ]
 
-    def get_rating(self, obj):
-        return 0
+    def get_job(self, obj):
+        job = AutoserviceJob.objects.filter(service=obj)
+        return AutoserviceJobSerializer(job, many=True).data
 
-
-class GetServiceFromUserSerializer(serializers.Serializer):
-    usr_lat = serializers.FloatField(write_only=True)
-    usr_long = serializers.FloatField(write_only=True)
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        return AutoServiceSerializer(
-            AutoService.objects.all(),
-            instance,
-            context={'request': request}
-        ).data
 
 class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
     """
@@ -80,22 +104,34 @@ class AutoServiceGeoIPSerializer(serializers.ModelSerializer):
         slug_field='rus_name',
         queryset=City.objects.all()
     )
+    car_service = TransportsSerializer(many=True)
+    job = serializers.SerializerMethodField()
     geo_size = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = AutoService
         fields = [
+            'id',
             'company',
+            'geolocation',
             'city',
             'address',
-            'geolocation',
-            'geo_size',
             'rating',
+            'votes',
+            'openfrom',
+            'openuntil',
+            'holidays',
+            'phone_number',
+            'email',
+            'site',
+            'car_service',
+            'job',
+            'geo_size',
         ]
 
-    def get_rating(self, obj):
-        return 0
+    def get_job(self, obj):
+        job = AutoserviceJob.objects.filter(service=obj)
+        return AutoserviceJobSerializer(job, many=True).data
 
     def get_geo_size(self, obj):
         """

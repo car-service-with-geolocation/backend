@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core import validators
+from django.core.validators import RegexValidator
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.validators import ASCIIUsernameValidator
@@ -126,16 +126,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         help_text='Введите имя'
     )
 
-    phone = models.CharField(
-        verbose_name='Номер телефона',
-        help_text='Введите номер телефона',
+    phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
         validators=[
-            validators.RegexValidator(
-                r'^+[0-9]{11}$',
-                'Используйте цифры от 0 до 9, начинайте ввод с +7',
+            RegexValidator(
+                r'^(\+7|8)[0-9]{10}$',
+                "Введите номер телефона в формате: '+79995553322'",
             )
         ],
+        help_text="Введите номер телефона",
+        unique=True,
     )
 
     date_joined = models.DateTimeField(

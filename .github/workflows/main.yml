@@ -43,11 +43,11 @@ jobs:
           sudo docker compose -f docker-compose.production.yml down
           sudo docker system prune -a --force
           sudo docker compose -f docker-compose.production.yml up -d
-          sudo docker compose -f docker-compose.production.yml exec python manage.py migrate
-          sudo docker compose -f docker-compose.production.yml exec python manage.py collectstatic
-          sudo docker compose -f docker-compose.production.yml exec cp -r /app/collected_static/. /static/
-          sudo docker compose -f docker-compose.production.yml exec python manage.py import_brand
-          sudo docker compose -f docker-compose.production.yml exec python manage.py load_city
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /static/
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_brand
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_city
 
   send_message:
     runs-on: ubuntu-latest

@@ -50,7 +50,7 @@ def calc_autoservice_distance_for_user(la1, la2, lo1, lo2):
 
     D_Lo = lo2 - lo1
     D_La = la2 - la1
-    P = sin(D_La / 2)**2 + cos(la1) * cos(la2) * sin(D_Lo / 2) ** 2
+    P = sin(D_La / 2) ** 2 + cos(la1) * cos(la2) * sin(D_Lo / 2) ** 2
 
     Q = 2 * asin(sqrt(P))
     R_km = 6371

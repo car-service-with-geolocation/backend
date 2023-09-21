@@ -1,6 +1,6 @@
 from core.utils import is_float
 from django.db.models import Avg, F, Value
-from django.db.models.functions import Abs, Sqrt, Radians, Cos, Sin, ASin
+from django.db.models.functions import Abs, Sqrt, Radians, Cos, Sin, ASin, Power
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, views, status
@@ -53,12 +53,22 @@ class AutoServiceFromGeoIPApiView(views.APIView):
             and is_float(request.query_params['latitude'])
             and is_float(request.query_params['longitude'])
         ):
+            
             lat = float(request.query_params['latitude'])
             lon = float(request.query_params['longitude'])
             queryset = queryset.annotate(
-                distance=Sqrt(
-                    Abs(F('geolocation__longitude') - lon)
-                    + Abs(F('geolocation__latitude') - lat)
+                distance=(
+                    2 * 6371
+                    * ASin(Sqrt(
+                        Power(Sin((
+                            Radians(F('geolocation__latitude')) - Radians(lat)
+                        ) / 2), 2)
+                        + Cos(Radians(lat))
+                        * Cos(Radians(F('geolocation__latitude')))
+                        * Power(Sin((
+                            Radians(F('geolocation__longitude')) - Radians(lon)
+                        ) / 2), 2)
+                    ))
                 )
             ).order_by('distance', '-rating')
         return Response(

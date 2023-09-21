@@ -1,16 +1,14 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework import serializers
-
+from api.v1.cars.serializers import TransportsSerializer
 from autoservice.models import (
     AutoService,
+    AutoserviceJob,
     Company,
     City,
+    Feedback,
     GeolocationAutoService,
-    AutoserviceJob,
 )
-from api.v1.cars.serializers import TransportsSerializer
-# from feedback.models import Feedback
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -91,35 +89,35 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         return AutoserviceJobSerializer(job, many=True).data
 
 
-# class FeedbackSerializer(serializers.ModelSerializer):
-#     """Сериализатор для модели Feedback."""
-#     author = serializers.SlugRelatedField(
-#         read_only=True,
-#         slug_field='username',
-#         default=serializers.CurrentUserDefault()
-#     )
-#
-#     def validate(self, data):
-#         if self.context['request'].method != 'POST':
-#             return data
-#         if Feedback.objects.filter(
-#             author=self.context['request'].user,
-#             autoservice=get_object_or_404(
-#                 AutoService,
-#                 id=self.context['view'].kwargs.get('autoservice_id')
-#             )
-#         ).exists():
-#             raise serializers.ValidationError(
-#                 'Можно оставить только один отзыв'
-#             )
-#         return data
-#
-#     class Meta:
-#         fields = (
-#             'id',
-#             'author',
-#             'text',
-#             'pub_date',
-#             'score',
-#         )
-#         model = Feedback
+class FeedbackSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Feedback."""
+    #author = serializers.SlugRelatedField(
+    #    read_only=True,
+    #    slug_field='username',
+    #    default=serializers.CurrentUserDefault()
+    #)
+
+    def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
+        if Feedback.objects.filter(
+            author=self.context['request'].user,
+            autoservice=get_object_or_404(
+                AutoService,
+                id=self.context['view'].kwargs.get('autoservice_id')
+            )
+        ).exists():
+            raise serializers.ValidationError(
+                'Можно оставить только один отзыв'
+            )
+        return data
+
+    class Meta:
+        model = Feedback
+        fields = (
+            'id',
+            #'author',
+            'text',
+            'score',
+            'pub_date',
+        )

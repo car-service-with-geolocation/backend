@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'cars',
     'core.apps.CoreConfig',
     'api.apps.ApiConfig',
-    'feedback',
 ]
 
 MIDDLEWARE = [

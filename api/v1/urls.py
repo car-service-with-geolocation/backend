@@ -10,7 +10,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path('autoservice/', include(urls_autoservice)),
     path('core/', include(urls_core)),
-    path('car/', include(urls_cars)),
+    path('car_models/', include(urls_cars)),
     path('users/', include(urls_users)),
     path('jobs/', include(urls_jobs)),
 ]

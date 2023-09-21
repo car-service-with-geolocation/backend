@@ -6,12 +6,15 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, views, status
 from rest_framework.response import Response
 
-from autoservice.models import Company, AutoService
-# from feedback.models import Feedback
+from autoservice.models import (
+    AutoService,
+    Company,
+    Feedback
+)
 from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
-    # FeedbackSerializer,
+    FeedbackSerializer,
 )
 
 
@@ -81,21 +84,22 @@ class AutoServiceFromGeoIPApiView(views.APIView):
         )
 
 
-# class FeedbackViewSet(viewsets.ModelViewSet):
-#     '''ViewSet для модели Feedback'''
-#     serializer_class = FeedbackSerializer
-#
-#     def get_autoservice(self):
-#         return get_object_or_404(
-#             AutoService,
-#             pk=self.kwargs.get('autoservice_id')
-#         )
-#
-#     def get_queryset(self):
-#         return self.get_autoservice().feedbacks.all()
-#
-#     def perform_create(self, serializer):
-#         serializer.save(
-#             author=self.request.user,
-#             autoservice=self.get_autoservice()
-#         )
+class FeedbackViewSet(viewsets.ModelViewSet):
+    '''ViewSet для модели Feedback'''
+    serializer_class = FeedbackSerializer
+
+    def get_autoservice(self):
+        return get_object_or_404(
+            AutoService,
+            pk=self.kwargs.get('autoservice_id')
+        )
+
+    def get_queryset(self):
+        return self.get_autoservice().feedbacks.all()
+
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user,
+            autoservice=self.get_autoservice()
+        )

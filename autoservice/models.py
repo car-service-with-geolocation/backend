@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.validators import ASCIIUsernameValidator
+from django.contrib.auth import get_user_model
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -8,6 +9,9 @@ from django.core.validators import (
 from django.db import models
 
 from cars.models import Transport
+
+
+User = get_user_model()
 
 
 class GeolocationCity(models.Model):
@@ -27,6 +31,11 @@ class GeolocationCity(models.Model):
     class Meta:
         verbose_name = "геолокацию"
         verbose_name_plural = "Геолокация городов РФ"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['latitude', 'longitude'], name='unique_city'
+            )
+        ]
 
 
 class City(models.Model):
@@ -98,6 +107,11 @@ class GeolocationAutoService(models.Model):
     class Meta:
         verbose_name = "геолокацию"
         verbose_name_plural = "Геолокация автосервисов РФ"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['latitude', 'longitude'], name='unique_geoservice'
+            )
+        ]
 
 
 class Job(models.Model):
@@ -279,3 +293,44 @@ class AutoserviceJob(models.Model):
     class Meta:
         verbose_name = "работу"
         verbose_name_plural = "Работы и прайсы автосервисов"
+
+
+class Feedback(models.Model):
+    '''Отзывы на АвтоСервисы от пользователя.'''
+    #author = models.ForeignKey(
+    #    User,
+    #    on_delete=models.CASCADE,
+    #    related_name='feedbacks',
+    #    verbose_name='Автор отзыва',
+    #)
+    autoservice = models.ForeignKey(
+        AutoService,
+        on_delete=models.CASCADE,
+        related_name='feedbacks',
+        verbose_name='Автосервис'
+    )
+    text = models.TextField(verbose_name='Текст отзыва')
+    score = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, message='Оценка ниже 1 невозможна'),
+            MaxValueValidator(10, message='Оценка выше 10 невозможна')
+        ],
+        verbose_name='Оценка автосервиса от пользователя'
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации отзыва',
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+        #constraints = [
+        #    models.UniqueConstraint(
+        #        fields=['author', 'autoservice'], name='unique_feedback'
+        #    )
+        #]
+
+    def __str__(self) -> str:
+        return f'{self.text[:25]}'

@@ -1,12 +1,13 @@
 from django.contrib import admin
 from .models import (
     AutoService,
+    AutoserviceJob,
     Company,
     City,
+    Feedback,
     GeolocationAutoService,
     GeolocationCity,
     Job,
-    AutoserviceJob,
 )
 
 
@@ -81,3 +82,4 @@ admin.site.register(City, CityAdmin)
 admin.site.register(AutoService, AutoServiceAdmin)
 admin.site.register(AutoserviceJob)
 admin.site.register(Job)
+admin.site.register(Feedback)

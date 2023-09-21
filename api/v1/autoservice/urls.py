@@ -8,11 +8,11 @@ router.register(
     views.CompanyViewset,
     basename='company'
 )
-router.register(
-    r'service/(?P<autoservice_id>\d+)/feedback',
-    views.FeedbackViewSet,
-    basename='feedback'
-)
+#router.register(
+#    r'service/(?P<autoservice_id>\d+)/feedback',
+#    views.FeedbackViewSet,
+#    basename='feedback'
+#)
 
 urlpatterns = [
     path('', include(router.urls)),

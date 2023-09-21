@@ -1,6 +1,7 @@
 @service = http://127.0.0.1:8000/api/v1/autoservice/service/
 @service_id = http://127.0.0.1:8000/api/v1/autoservice/service/2/
 @filter_service = http://127.0.0.1:8000/api/v1/autoservice/service/?latitude=60&longitude=60
+@add_feedback = http://127.0.0.1:8000/api/v1/autoservice/service/2/feedback/
 
 ###
 GET {{ service }} HTTP/1.1
@@ -13,3 +14,12 @@ content-type: application/json
 ###
 GET {{ filter_service }} HTTP/1.1
 content-type: application/json
+
+###
+POST {{ add_feedback }} HTTP/1.1
+content-type: application/json
+
+{
+    "text": "Хрнеь какая то",
+    "score": 1
+}

@@ -97,7 +97,6 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.get_autoservice().feedbacks.all()
 
-
     def perform_create(self, serializer):
         serializer.save(
             author=self.request.user,

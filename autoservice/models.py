@@ -266,9 +266,8 @@ class AutoserviceJob(models.Model):
         verbose_name='Тип работы автосервиса',
         help_text='Выберите необходимый тип работ',
     )
-    price = models.CharField(
-        max_length=settings.MAX_LENGTH_JOBS_PRICE,
-        verbose_name='Относительная стоимость работ',
+    price = models.FloatField(
+        verbose_name='Стоимость работ',
         validators=[
             MinValueValidator(1, message='Стоимость ниже 1 невозможна'),
         ],

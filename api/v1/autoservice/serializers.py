@@ -64,6 +64,9 @@ class AutoServiceSerializer(serializers.ModelSerializer):
     car_service = TransportsSerializer(many=True)
     job = serializers.SerializerMethodField()
 
+    #rating = serializers.FloatField(read_only=True)
+    #votes = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = AutoService
         fields = [

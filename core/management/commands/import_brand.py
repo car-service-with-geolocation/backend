@@ -16,12 +16,12 @@ def process_file(name: str):
 class Command(BaseCommand): 
  
     def handle(self, *args, **options): 
- 
         # парсер базы данных 
         csv = process_file('brand.csv') 
-        next(csv, None) 
-        for row in csv: 
+        #next(csv, None) 
+        for row in csv:
             obj, created = Transport.objects.get_or_create( 
                 brand=row[0], 
-                model=row[1]) 
+                slug=row[1]
+            ) 
         print('парсер транспорта прошел успешно')

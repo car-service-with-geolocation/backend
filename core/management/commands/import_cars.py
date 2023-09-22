@@ -20,8 +20,9 @@ class Command(BaseCommand):
         # парсер базы данных 
         csv = process_file('transport.csv') 
         next(csv, None) 
-        for row in csv: 
+        for row in csv:
             obj, created = Transport.objects.get_or_create( 
                 brand=row[0], 
-                model=row[1]) 
+                model=row[1]
+            ) 
         print('парсер транспорта прошел успешно')

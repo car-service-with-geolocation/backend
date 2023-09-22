@@ -70,6 +70,7 @@ class Company(models.Model):
         help_text="Укажите название компании"
     )
     description = models.TextField(
+        null=True,
         verbose_name="Описание компании",
     )
     logo = models.ImageField(
@@ -78,6 +79,7 @@ class Company(models.Model):
         null=True,
     )
     legal_address = models.CharField(
+        null=True,
         max_length=250,
         verbose_name="Юридический адрес",
     )
@@ -121,6 +123,7 @@ class Job(models.Model):
         verbose_name='Название работы'
     )
     description = models.CharField(
+        null=True,
         max_length=settings.MAX_LENGTH_JOBS_DESCRIPTION,
         verbose_name='Описание работы'
     )
@@ -207,7 +210,8 @@ class AutoService(models.Model):
             'Укажите выходной день'
         ),
         max_length=1,
-        choices=settings.DAY_CHOICES
+        choices=settings.DAY_CHOICES,
+        null=True,
     )
     phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
@@ -218,11 +222,13 @@ class AutoService(models.Model):
             )
         ],
         help_text="Введите номер телефона",
+        null=True,
         #unique=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
+        null=True,
         #unique=True,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
@@ -233,6 +239,7 @@ class AutoService(models.Model):
     site = models.CharField(
         verbose_name='Сайт автосервиса',
         max_length=settings.EMAIL_MAX_LENGTH,
+        null=True,
         #unique=True,
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"

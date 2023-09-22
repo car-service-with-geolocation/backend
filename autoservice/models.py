@@ -306,7 +306,7 @@ class Feedback(models.Model):
     autoservice = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
-        related_name='feedbacks',
+        related_name='feedback',
         verbose_name='Автосервис'
     )
     text = models.TextField(verbose_name='Текст отзыва')

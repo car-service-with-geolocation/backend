@@ -1,6 +1,6 @@
 from core.utils import is_float
-from django.db.models import Avg, F, Value
-from django.db.models.functions import Abs, Sqrt, Radians, Cos, Sin, ASin, Power
+from django.db.models import Avg, F, Count
+from django.db.models.functions import Sqrt, Radians, Cos, Sin, ASin, Power
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, views, status
@@ -29,7 +29,12 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
 class RetriveAutoServiceApiView(views.APIView):
 
     def get(self, request, id):
-        queryset = get_object_or_404(AutoService, id=id)
+        #queryset = get_object_or_404(AutoService, id=id)
+        queryset = AutoService.objects.filter(
+            id=id
+        #).annotate(
+        #    newrating=Avg('feedback__score')
+        ).first()
         return Response(
             AutoServiceSerializer(
                 queryset,
@@ -45,7 +50,12 @@ class AutoServiceFromGeoIPApiView(views.APIView):
     Автосервисы отсортированы по расстоянию до клиента.
     """
     def get(self, request):
-        queryset = AutoService.objects.select_related("geolocation").order_by('-rating')
+        queryset = AutoService.objects.select_related(
+            "geolocation"
+        #).annotate(
+        #    newrating=Avg('feedback__score'),
+        #    newvotes=Count('feedback__score')
+        ).order_by('-rating')
         #if 'city' in request.query_params:
         #    queryset = AutoService.objects.filter(
         #        city=request.query_params['city']

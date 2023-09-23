@@ -32,3 +32,5 @@ services:
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/static/
       - media_value:/app/media/
+
+

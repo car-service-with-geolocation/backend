@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from api.v1.cars.serializers import TransportsSerializer
 from autoservice.models import (
@@ -15,6 +16,8 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     Сериализатор для компаний автосервисов.
     """
+    image = Base64ImageField()
+
     class Meta:
         model = Company
         fields = [

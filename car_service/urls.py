@@ -3,7 +3,9 @@ from django.urls import include, path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf.urls.static import static
 from django.conf.urls import url
+from django.conf import settings
 
 from rest_framework.routers import DefaultRouter
 
@@ -37,3 +39,6 @@ urlpatterns += [
        name='schema-redoc'),
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

@@ -74,7 +74,7 @@ class Company(models.Model):
         verbose_name="Описание компании",
     )
     logo = models.ImageField(
-        'Логотип компании', 
+        'Логотип компании',
         upload_to='autoservice/images/logo',
         null=True,
     )

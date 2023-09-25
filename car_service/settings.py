@@ -1,26 +1,20 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
+
+DEBUG = os.getenv('DEBUG') == 'True'
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split()
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -29,11 +23,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_yasg',
+    'djoser',
+    'django_filters',
+    'colorfield',
+    'users.apps.UsersConfig',
+    'autoservice.apps.AutoserviceConfig',
+    'cars',
+    'core.apps.CoreConfig',
+    'api.apps.ApiConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -41,7 +47,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+
 ROOT_URLCONF = 'car_service.urls'
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'static/geoip')
 
 TEMPLATES = [
     {
@@ -59,11 +70,9 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'car_service.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 if os.getenv('DEVELOPMENT', 'True') == 'True':
     DATABASES = {
@@ -75,7 +84,7 @@ if os.getenv('DEVELOPMENT', 'True') == 'True':
 else:
     DATABASES = {
         "default": {
-            "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+            "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("DB_NAME", "postgres"),
             "USER": os.getenv("POSTGRES_USER", "postgres"),
             "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
@@ -85,8 +94,37 @@ else:
     }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+DJOSER = {
+    "SERIALIZERS": {
+        'user': 'api.v1.users.serializers.CustomUserSerializer',
+        'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+        'user_list': ['rest_framework.permissions.IsAdminUser'],
+    },
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'TOKEN_MODEL': None,
+    'ACTIVATION_URL': 'v1/auth/users/activation/{uid}/{token}/',
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -104,8 +142,23 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+if os.getenv('DEVELOPMENT') == 'True':
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.yandex.ru'
+    EMAIL_PORT = 465
+    EMAIL_HOST_USER = 'todo'
+    EMAIL_HOST_PASSWORD = 'todo'
+    EMAIL_USE_SSL = True
+    DEFAULT_FROM_EMAIL = 'some_service_email'
+
+AUTH_USER_MODEL = 'users.CustomUser'
+ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
+
+
 # Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru-RU'
 
@@ -119,6 +172,43 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'collected_static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Константы
+MAX_LENGTH_TRANSPORT_SLUG = 150
+MAX_LENGTH_TRANSPORT_BRAND = 150
+MAX_LENGTH_TRANSPORT_MODEL = 150
+MAX_LENGTH_VIN = 17
+MAX_LENGTH_NUMBER_OF_CAR = 9
+MAX_LENGTH_ODOMETR = 10
+MAX_LENGTH_JOBS_NAME = 150
+MAX_LENGTH_JOBS_DESCRIPTION = 150
+MAX_LENGTH_JOBS_PRICE = 5
+MAX_LENGTH_JOBS_SLUG = 150
+WORKING_TIME_MAX_LENGTH = 5
+
+# Константы users.apps
+USERNAME_MAX_LENGTH = 40
+EMAIL_MAX_LENGTH = 80
+PHONE_MAX_LENGTH = 12
+FIRST_NAME_MAX_LENGTH = 40
+LAST_NAME_MAX_LENGTH = 40
+
+# Константы autoservice.apps
+DAY_CHOICES = (
+    ('1', 'Понедельник'),
+    ('2', 'Вторник'),
+    ('3', 'Среда'),
+    ('4', 'Четверг'),
+    ('5', 'Пятница'),
+    ('6', 'Суббота'),
+    ('7', 'Воскресенье'),
+)

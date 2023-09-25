@@ -38,7 +38,6 @@ class RetriveAutoServiceApiView(views.APIView):
         return Response(
             AutoServiceSerializer(
                 queryset,
-                context={"request": request},
             ).data,
             status=status.HTTP_200_OK
         )
@@ -87,7 +86,6 @@ class AutoServiceFromGeoIPApiView(views.APIView):
         return Response(
             AutoServiceSerializer(
                 queryset,
-                context={"request": request},
                 many=True
             ).data,
             status=status.HTTP_200_OK

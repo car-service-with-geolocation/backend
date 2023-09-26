@@ -59,4 +59,4 @@ jobs:
       with:
         to: ${{ secrets.TG_TO_AP }}
         token: ${{ secrets.TG_TOKEN_AP }}
-        message: Деплой успешно выполнен!
+        message: Деплой успешно выполнен, контейнер backend обновлен!

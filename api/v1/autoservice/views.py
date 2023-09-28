@@ -3,7 +3,7 @@ from django.db.models import Avg, F, Count
 from django.db.models.functions import Sqrt, Radians, Cos, Sin, ASin, Power
 from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets, views, status
+from rest_framework import viewsets, views, status, mixins
 from rest_framework.response import Response
 
 from autoservice.models import (
@@ -24,6 +24,23 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     """
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+
+
+class AutoServiceViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin
+):
+    serializer_class = AutoServiceSerializer
+
+    def get_queryset(self):
+        queryset = AutoService.objects.select_related(
+            "geolocation"
+        #).annotate(
+        #    newrating=Avg('feedback__score'),
+        #    newvotes=Count('feedback__score')
+        ).order_by('-rating')
+        return queryset
 
 
 class RetriveAutoServiceApiView(views.APIView):

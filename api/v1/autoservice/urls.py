@@ -10,6 +10,12 @@ router.register(
     views.CompanyViewset,
     basename='company'
 )
+router.register(
+    r'serviceviewset',
+    views.AutoServiceViewSet,
+    basename='serviceviewset'
+)
+
 #router.register(
 #    r'service/(?P<autoservice_id>\d+)/feedback',
 #    views.FeedbackViewSet,

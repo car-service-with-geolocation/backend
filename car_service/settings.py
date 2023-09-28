@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+
 load_dotenv()
 
 
@@ -73,7 +74,6 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'car_service.wsgi.application'
-
 if os.getenv('DEVELOPMENT', 'True') == 'True':
     DATABASES = {
         "default": {

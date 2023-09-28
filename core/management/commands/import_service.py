@@ -15,7 +15,7 @@ class Command(BaseCommand):
     Импорт данных давтосервисов из CSV.
     """
     def handle(self, *args, **options) -> None: 
-        csv: reader = process_file('service.csv')
+        csv: reader = process_file('service.csv', ';')
         next(csv, None)
 
         obj_city: City = City.objects.filter(rus_name='Москва').first()

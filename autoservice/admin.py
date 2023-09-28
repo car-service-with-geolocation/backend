@@ -69,6 +69,12 @@ class AutoServiceAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+admin.site.register(AutoService, AutoServiceAdmin)
+admin.site.register(AutoserviceJob)
+admin.site.register(Company, CompanyAdmin)
+admin.site.register(City, CityAdmin)
+admin.site.register(Feedback)
+admin.site.register(Job)
 admin.site.register(
     GeolocationAutoService,
     GeolocationAutoServiceAdmin
@@ -77,9 +83,3 @@ admin.site.register(
     GeolocationCity,
     GeolocationCityAdmin,
 )
-admin.site.register(Company, CompanyAdmin)
-admin.site.register(City, CityAdmin)
-admin.site.register(AutoService, AutoServiceAdmin)
-admin.site.register(AutoserviceJob)
-admin.site.register(Job)
-admin.site.register(Feedback)

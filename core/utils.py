@@ -18,19 +18,21 @@ def is_float(str_num: str) -> bool:
         return False
 
 
-def process_file(filename: str) -> csv.reader:
+def process_file(filename: str, delimiter: str = ',') -> csv.reader:
     """
     Чтение CSV файла по имени из статических данных.
     """
     return csv.reader(
         open(
             os.path.join( 
-                settings.BASE_DIR, 'static/data/', filename
+                settings.BASE_DIR,
+                'static/data/',
+                filename
             ), 
             'r',
             encoding='utf-8'
         ),
-        delimiter=';'
+        delimiter=delimiter
     )
 
 

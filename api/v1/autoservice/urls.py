@@ -15,7 +15,6 @@ router.register(
     views.AutoServiceViewSet,
     basename='service'
 )
-
 #router.register(
 #    r'service/(?P<autoservice_id>\d+)/feedback',
 #    views.FeedbackViewSet,

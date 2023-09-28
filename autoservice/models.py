@@ -7,7 +7,6 @@ from django.core.validators import (
     RegexValidator
 )
 from django.db import models
-
 from cars.models import Transport
 
 

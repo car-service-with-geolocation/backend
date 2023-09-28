@@ -31,7 +31,10 @@ class AutoServiceViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin
 ):
-    """ViewSet для получения списка автосервисов"""
+    """
+    ViewSet для получения списка автосервисов
+    param: latitude
+    """
     serializer_class = AutoServiceSerializer
 
     def get_queryset(self):

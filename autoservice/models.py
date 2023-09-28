@@ -167,7 +167,7 @@ class AutoService(models.Model):
     rating = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message='Оценка ниже 1 невозможна'),
-            MaxValueValidator(10, message='Оценка выше 10 невозможна')
+            MaxValueValidator(5, message='Оценка выше 5 невозможна')
         ],
         verbose_name='Рейтинг автосервиса',
         help_text='Укажите рейтинг автосервиса'
@@ -320,7 +320,7 @@ class Feedback(models.Model):
     score = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message='Оценка ниже 1 невозможна'),
-            MaxValueValidator(10, message='Оценка выше 10 невозможна')
+            MaxValueValidator(5, message='Оценка выше 5 невозможна')
         ],
         verbose_name='Оценка автосервиса от пользователя'
     )

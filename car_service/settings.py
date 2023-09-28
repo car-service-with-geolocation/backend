@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+
 load_dotenv()
 
 
@@ -11,10 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
 
 DEBUG = os.getenv('DEBUG') == 'True'
-
+DEVELOPMENT = os.getenv('DEVELOPMENT', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -73,8 +73,7 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'car_service.wsgi.application'
-
-if os.getenv('DEVELOPMENT', 'True') == 'True':
+if DEVELOPMENT:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -142,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-if os.getenv('DEVELOPMENT') == 'True':
+if DEVELOPMENT:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 else:

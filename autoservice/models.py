@@ -26,7 +26,7 @@ class GeolocationCity(models.Model):
 
     def __str__(self):
         return f"{self.latitude} - {self.longitude}"
-    
+
     class Meta:
         verbose_name = "геолокацию"
         verbose_name_plural = "Геолокация городов РФ"
@@ -52,7 +52,7 @@ class City(models.Model):
 
     def __str__(self):
         return f"{self.rus_name}"
-    
+
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города РФ"
@@ -89,7 +89,7 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.title}"
-    
+
 
 class GeolocationAutoService(models.Model):
     """
@@ -104,7 +104,7 @@ class GeolocationAutoService(models.Model):
 
     def __str__(self):
         return f"{self.latitude} - {self.longitude}"
-    
+
     class Meta:
         verbose_name = "геолокацию"
         verbose_name_plural = "Геолокация автосервисов РФ"
@@ -116,7 +116,9 @@ class GeolocationAutoService(models.Model):
 
 
 class Job(models.Model):
-    """Модель работ"""
+    """
+    Модель работ выполняемых автосервисами
+    """
     title = models.CharField(
         max_length=settings.MAX_LENGTH_JOBS_NAME,
         verbose_name='Название работы'
@@ -138,7 +140,7 @@ class Job(models.Model):
 
 class AutoService(models.Model):
     """
-    Модель для хранения данных об автосервисах.
+    Модель автосервиса
     """
     company = models.ForeignKey(
         Company,
@@ -222,39 +224,39 @@ class AutoService(models.Model):
         ],
         help_text="Введите номер телефона",
         null=True,
-        #unique=True,
+        # unique=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        #unique=True,
+        # unique=True,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
-        #error_messages={
+        # error_messages={
         #    'unique': 'Автосервис с такой почтой уже существует',
-        #},
+        # },
     )
     site = models.CharField(
         verbose_name='Сайт автосервиса',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        #unique=True,
+        # unique=True,
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"
         ),
-        #validators=[
+        # validators=[
         #    RegexValidator(
         #        r'^(https?|ftp)://[^\s/$.?#].[^\s]*$$',
         #        message=(
         #            "Ошибка ввода, используйте формат: 'www.example.com'"
         #        )
         #    )
-        #],
+        # ],
     )
     job = models.ManyToManyField(
         Job,
-        through='autoservicejob',
+        through='AutoserviceJob',
         verbose_name='Работы',
         help_text='Выберите необходимый тип работ',
     )
@@ -274,6 +276,9 @@ class AutoService(models.Model):
 
 
 class AutoserviceJob(models.Model):
+    """
+    Модель для связи модели автосервиса и модели работы
+    """
     service = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
@@ -295,20 +300,22 @@ class AutoserviceJob(models.Model):
 
     def __str__(self) -> str:
         return f'{self.job.title} — {self.price}'
-    
+
     class Meta:
         verbose_name = "работу"
         verbose_name_plural = "Работы и прайсы автосервисов"
 
 
 class Feedback(models.Model):
-    '''Отзывы на АвтоСервисы от пользователя.'''
-    #author = models.ForeignKey(
-    #    User,
-    #    on_delete=models.CASCADE,
-    #    related_name='feedbacks',
-    #    verbose_name='Автор отзыва',
-    #)
+    """
+    Модель отзыва пользователя на автосервис
+    """
+    # author = models.ForeignKey(
+    #     User,
+    #     on_delete=models.CASCADE,
+    #     related_name='feedbacks',
+    #     verbose_name='Автор отзыва',
+    # )
     autoservice = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
@@ -332,11 +339,11 @@ class Feedback(models.Model):
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        #constraints = [
-        #    models.UniqueConstraint(
-        #        fields=['author', 'autoservice'], name='unique_feedback'
-        #    )
-        #]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=['author', 'autoservice'], name='unique_feedback'
+        #     )
+        # ]
 
     def __str__(self) -> str:
         return f'{self.text[:25]}'

@@ -6,16 +6,17 @@ from pathlib import Path
 load_dotenv()
 
 
+# COMMON SETTINGS
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
 
 DEBUG = os.getenv('DEBUG') == 'True'
-DEVELOPMENT = os.getenv('DEVELOPMENT', 'True') == 'True'
+DEVELOPMENT = os.getenv('DEVELOPMENT') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
-
+WSGI_APPLICATION = 'car_service.wsgi.application'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,13 +28,13 @@ INSTALLED_APPS = [
     'drf_yasg',
     'djoser',
     'django_filters',
-    'colorfield',
-    'users.apps.UsersConfig',
-    'autoservice.apps.AutoserviceConfig',
-    'cars',
-    'core.apps.CoreConfig',
-    'api.apps.ApiConfig',
     'corsheaders',
+    'colorfield',
+    'api.apps.ApiConfig',
+    'autoservice.apps.AutoserviceConfig',
+    'cars.apps.CarsConfig',
+    'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,8 +72,7 @@ TEMPLATES = [
 ]
 
 
-
-WSGI_APPLICATION = 'car_service.wsgi.application'
+# Database settings
 if DEVELOPMENT:
     DATABASES = {
         "default": {
@@ -93,6 +93,7 @@ else:
     }
 
 
+# DRF settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -140,6 +141,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.CustomUser'
+ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
+
 
 if DEVELOPMENT:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -153,20 +157,12 @@ else:
     EMAIL_USE_SSL = True
     DEFAULT_FROM_EMAIL = 'some_service_email'
 
-AUTH_USER_MODEL = 'users.CustomUser'
-ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
 
-
-# Internationalization
-
+# Internationalization settings
 LANGUAGE_CODE = 'ru-RU'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -181,7 +177,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Константы
+# Constants settings cars.apps
 MAX_LENGTH_TRANSPORT_SLUG = 150
 MAX_LENGTH_TRANSPORT_BRAND = 150
 MAX_LENGTH_TRANSPORT_MODEL = 150
@@ -194,14 +190,14 @@ MAX_LENGTH_JOBS_PRICE = 5
 MAX_LENGTH_JOBS_SLUG = 150
 WORKING_TIME_MAX_LENGTH = 5
 
-# Константы users.apps
+# Constants users.apps
 USERNAME_MAX_LENGTH = 40
 EMAIL_MAX_LENGTH = 80
 PHONE_MAX_LENGTH = 12
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
 
-# Константы autoservice.apps
+# Constants autoservice.apps
 DAY_CHOICES = (
     ('1', 'Понедельник'),
     ('2', 'Вторник'),

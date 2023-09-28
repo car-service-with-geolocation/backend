@@ -24,11 +24,11 @@ def process_file(filename: str, delimiter: str = ',') -> csv.reader:
     """
     return csv.reader(
         open(
-            os.path.join( 
+            os.path.join(
                 settings.BASE_DIR,
                 'static/data/',
                 filename
-            ), 
+            ),
             'r',
             encoding='utf-8'
         ),
@@ -52,10 +52,10 @@ def get_geoip_from_request(request: Request) -> Optional[dict]:
     """
     Получение геолокации клиента из request по IP.
     """
-    g: GeoIP2 = GeoIP2()
+    # g: GeoIP2 = GeoIP2()
     ip: str = get_client_ip(request)
     return get_geo_from_ip(ip)
-    
+
 
 def get_geo_from_ip(ip: str) -> Optional[dict]:
     """
@@ -72,8 +72,8 @@ def get_geo_from_ip(ip: str) -> Optional[dict]:
 
 
 def calc_autoservice_distance_for_user(
-    la1: float, 
-    la2: float, 
+    la1: float,
+    la2: float,
     lo1: float,
     lo2: float
 ) -> float:

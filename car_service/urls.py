@@ -16,6 +16,7 @@ urlpatterns = [
     path('api/', include('api.urls', namespace='api')),
 ]
 
+# Add auto generated OpenApi schema
 schema_view = get_schema_view(
    openapi.Info(
       title="Car-service API",

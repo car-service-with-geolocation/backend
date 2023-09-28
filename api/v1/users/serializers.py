@@ -4,6 +4,9 @@ from users.models import CustomUser
 
 
 class CustomUserSerializer(UserSerializer):
+    """
+    Сериализатор для модели пользователя CustomUser
+    """
     image = Base64ImageField()
 
     class Meta:
@@ -18,4 +21,3 @@ class CustomUserSerializer(UserSerializer):
                   'date_joined',
                   'image'
                   )
-

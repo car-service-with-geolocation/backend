@@ -19,6 +19,7 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     """
     Вьюсет для чтения информации о компаниях по ремонту авто.
     """
+
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
@@ -32,23 +33,26 @@ class AutoServiceViewSet(
     ViewSet для получения списка автосервисов
     param: latitude
     """
+
     serializer_class = AutoServiceSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = AutoService.objects.select_related(
             "geolocation"
-        #).annotate(
-        #    newrating=Avg('feedback__score'),
-        #    newvotes=Count('feedback__score')
         ).order_by('-rating')
+        # queryset = AutoService.objects.select_related(
+        #     "geolocation"
+        #     ).annotate(
+        #        newrating=Avg('feedback__score'),
+        #        newvotes=Count('feedback__score')
+        # ).order_by('-rating')
         if (
             'latitude' in self.request.query_params
             and 'longitude' in self.request.query_params
             and is_float(self.request.query_params['latitude'])
             and is_float(self.request.query_params['longitude'])
         ):
-            
             lat = float(self.request.query_params['latitude'])
             lon = float(self.request.query_params['longitude'])
             queryset = queryset.annotate(
@@ -70,7 +74,10 @@ class AutoServiceViewSet(
 
 
 class FeedbackViewSet(viewsets.ModelViewSet):
-    '''ViewSet для модели отзывов Feedback'''
+    """
+    ViewSet для модели отзывов Feedback
+    """
+
     serializer_class = FeedbackSerializer
 
     def get_autoservice(self):

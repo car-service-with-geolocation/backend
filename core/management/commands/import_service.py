@@ -6,22 +6,25 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
  
 from autoservice.models import AutoService, Company, City, GeolocationAutoService
- 
- 
-def process_file(name: str): 
-    return csv.reader(open(os.path.join( 
-        settings.BASE_DIR, 'static/data/', name), 
-        'r', encoding='utf-8'), delimiter=';') 
+from core.utils import process_file
+from csv import reader
  
  
 class Command(BaseCommand): 
- 
-    def handle(self, *args, **options): 
-        # парсер базы данных 
-        csv = process_file('service.csv')
+    """
+    Импорт данных давтосервисов из CSV.
+    """
+    def handle(self, *args, **options) -> None: 
+        csv: reader = process_file('service.csv')
         next(csv, None)
-        obj_city = City.objects.filter(rus_name='Москва').first()
+
+        obj_city: City = City.objects.filter(rus_name='Москва').first()
         for row in csv:
+            obj_company: Company
+            obj_geo: GeolocationAutoService
+            obj_service: AutoService
+            created: bool
+
             obj_company, created = Company.objects.get_or_create(
                 title=row[0],
                 description=row[7]
@@ -41,4 +44,4 @@ class Command(BaseCommand):
                 openuntil=row[3],
                 site=row[6]
             ) 
-        print('парсер автосервисов прошел успешно')
+        self.stdout.write('Импорт автосервсов прошел успешно.')

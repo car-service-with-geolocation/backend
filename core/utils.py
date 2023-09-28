@@ -3,6 +3,8 @@ from django.conf import settings
 from rest_framework.request import Request
 from math import radians, cos, sin, asin, sqrt
 from typing import Optional
+import os
+import csv
 
 
 def is_float(str_num: str) -> bool:
@@ -14,6 +16,22 @@ def is_float(str_num: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def process_file(filename: str) -> csv.reader:
+    """
+    Чтение CSV файла по имени из статических данных.
+    """
+    return csv.reader(
+        open(
+            os.path.join( 
+                settings.BASE_DIR, 'static/data/', filename
+            ), 
+            'r',
+            encoding='utf-8'
+        ),
+        delimiter=';'
+    )
 
 
 def get_client_ip(request: Request) -> str:

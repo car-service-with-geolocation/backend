@@ -11,9 +11,9 @@ router.register(
     basename='company'
 )
 router.register(
-    r'serviceviewset',
+    r'service',
     views.AutoServiceViewSet,
-    basename='serviceviewset'
+    basename='service'
 )
 
 #router.register(
@@ -24,16 +24,6 @@ router.register(
 
 urlpatterns = [
     path('', include(router.urls)),
-    path(
-        'service/',
-        views.AutoServiceFromGeoIPApiView.as_view(),
-        name='service'
-    ),
-    path(
-        'service/<int:id>/',
-        views.RetriveAutoServiceApiView.as_view(),
-        name='service-id'
-    )
 ]
 
 if settings.DEBUG:

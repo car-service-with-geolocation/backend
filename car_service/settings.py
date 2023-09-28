@@ -12,6 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
 
 DEBUG = os.getenv('DEBUG') == 'True'
+DEVELOPMENT = os.getenv('DEVELOPMENT', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 
@@ -72,7 +73,7 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'car_service.wsgi.application'
-if os.getenv('DEVELOPMENT', 'True') == 'True':
+if DEVELOPMENT:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -88,6 +89,13 @@ else:
             "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
             "HOST": os.getenv("DB_HOST", "db"),
             "PORT": os.getenv("DB_PORT", "5432"),
+        },
+    }
+
+DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "db.sqlite3",
         },
     }
 
@@ -140,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-if os.getenv('DEVELOPMENT') == 'True':
+if DEVELOPMENT:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 else:

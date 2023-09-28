@@ -31,6 +31,7 @@ class AutoServiceViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin
 ):
+    """ViewSet для получения списка автосервисов"""
     serializer_class = AutoServiceSerializer
 
     def get_queryset(self):
@@ -40,51 +41,15 @@ class AutoServiceViewSet(
         #    newrating=Avg('feedback__score'),
         #    newvotes=Count('feedback__score')
         ).order_by('-rating')
-        return queryset
-
-
-class RetriveAutoServiceApiView(views.APIView):
-
-    def get(self, request, id):
-        #queryset = get_object_or_404(AutoService, id=id)
-        queryset = AutoService.objects.filter(
-            id=id
-        #).annotate(
-        #    newrating=Avg('feedback__score')
-        ).first()
-        return Response(
-            AutoServiceSerializer(
-                queryset,
-            ).data,
-            status=status.HTTP_200_OK
-        )
-
-
-class AutoServiceFromGeoIPApiView(views.APIView):
-    """
-    ApiView для получения автосервисов.
-    Автосервисы отсортированы по расстоянию до клиента.
-    """
-    def get(self, request):
-        queryset = AutoService.objects.select_related(
-            "geolocation"
-        #).annotate(
-        #    newrating=Avg('feedback__score'),
-        #    newvotes=Count('feedback__score')
-        ).order_by('-rating')
-        #if 'city' in request.query_params:
-        #    queryset = AutoService.objects.filter(
-        #        city=request.query_params['city']
-        #    )
         if (
-            'latitude' in request.query_params
-            and 'longitude' in request.query_params
-            and is_float(request.query_params['latitude'])
-            and is_float(request.query_params['longitude'])
+            'latitude' in self.request.query_params
+            and 'longitude' in self.request.query_params
+            and is_float(self.request.query_params['latitude'])
+            and is_float(self.request.query_params['longitude'])
         ):
             
-            lat = float(request.query_params['latitude'])
-            lon = float(request.query_params['longitude'])
+            lat = float(self.request.query_params['latitude'])
+            lon = float(self.request.query_params['longitude'])
             queryset = queryset.annotate(
                 distance=(
                     2 * 6371
@@ -100,17 +65,11 @@ class AutoServiceFromGeoIPApiView(views.APIView):
                     ))
                 )
             ).order_by('distance', '-rating')
-        return Response(
-            AutoServiceSerializer(
-                queryset,
-                many=True
-            ).data,
-            status=status.HTTP_200_OK
-        )
+        return queryset
 
 
 class FeedbackViewSet(viewsets.ModelViewSet):
-    '''ViewSet для модели Feedback'''
+    '''ViewSet для модели отзывов Feedback'''
     serializer_class = FeedbackSerializer
 
     def get_autoservice(self):

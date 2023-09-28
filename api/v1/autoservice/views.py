@@ -1,18 +1,14 @@
 from django.db.models import F
-from django.db.models.functions import Sqrt, Radians, Cos, Sin, ASin, Power
+from django.db.models.functions import ASin, Cos, Power, Radians, Sin, Sqrt
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
-from autoservice.models import (
-    AutoService,
-    Company,
-)
+
+from autoservice.models import AutoService, Company
 from core.utils import is_float
-from .serializers import (
-    AutoServiceSerializer,
-    CompanySerializer,
-    FeedbackSerializer,
-)
+
+from .serializers import (AutoServiceSerializer, CompanySerializer,
+                          FeedbackSerializer)
 
 
 class CompanyViewset(viewsets.ReadOnlyModelViewSet):

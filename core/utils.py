@@ -1,10 +1,11 @@
-from django.contrib.gis.geoip2 import GeoIP2
-from django.conf import settings
-from rest_framework.request import Request
-from math import radians, cos, sin, asin, sqrt
-from typing import Optional
-import os
 import csv
+import os
+from math import asin, cos, radians, sin, sqrt
+from typing import Optional
+
+from django.conf import settings
+from django.contrib.gis.geoip2 import GeoIP2
+from rest_framework.request import Request
 
 
 def is_float(str_num: str) -> bool:

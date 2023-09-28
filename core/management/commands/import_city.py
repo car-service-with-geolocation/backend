@@ -1,8 +1,10 @@
+from csv import reader
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
 from autoservice.models import City, GeolocationCity
 from core.utils import process_file
-from csv import reader
 
 
 class Command(BaseCommand):

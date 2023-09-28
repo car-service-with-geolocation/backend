@@ -1,15 +1,10 @@
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+
 from api.v1.cars.serializers import TransportsSerializer
-from autoservice.models import (
-    AutoService,
-    AutoserviceJob,
-    Company,
-    City,
-    Feedback,
-    GeolocationAutoService,
-)
+from autoservice.models import (AutoService, AutoserviceJob, City, Company,
+                                Feedback, GeolocationAutoService)
 
 
 class CompanySerializer(serializers.ModelSerializer):

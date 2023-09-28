@@ -1,11 +1,6 @@
 from django.urls import path
 
-from .views import (TransportList,
-                    TransportDetail,
-                    # CarsList,
-                    # CarsDetail
-                    )
-
+from .views import TransportDetail, TransportList  # CarsList,; CarsDetail
 
 urlpatterns = [
     path('', TransportList.as_view(), name='transport-list'),

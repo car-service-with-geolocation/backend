@@ -1,14 +1,8 @@
 from django.contrib import admin
-from autoservice.models import (
-    AutoService,
-    AutoserviceJob,
-    Company,
-    City,
-    Feedback,
-    GeolocationAutoService,
-    GeolocationCity,
-    Job,
-)
+
+from autoservice.models import (AutoService, AutoserviceJob, City, Company,
+                                Feedback, GeolocationAutoService,
+                                GeolocationCity, Job)
 
 
 class CompanyAdmin(admin.ModelAdmin):

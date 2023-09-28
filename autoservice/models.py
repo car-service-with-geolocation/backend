@@ -1,14 +1,11 @@
 from django.conf import settings
-from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.contrib.auth import get_user_model
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-    RegexValidator
-)
+from django.contrib.auth.validators import ASCIIUsernameValidator
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
-from cars.models import Transport
 
+from cars.models import Transport
 
 User = get_user_model()
 

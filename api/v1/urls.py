@@ -1,7 +1,8 @@
-from django.urls import path, include
+from django.urls import include, path
+
 from .autoservice import urls as urls_autoservice
-from .core import urls as urls_core
 from .cars import urls as urls_cars
+from .core import urls as urls_core
 # from .users import urls as urls_users
 from .jobs import urls as urls_jobs
 

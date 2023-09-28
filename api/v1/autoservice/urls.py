@@ -1,8 +1,9 @@
-from . import views
-from django.urls import path, include
-from rest_framework.routers import SimpleRouter
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
+
+from . import views
 
 router = SimpleRouter()
 router.register(

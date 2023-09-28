@@ -2,10 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
 from rest_framework.permissions import IsAuthenticated
 
+from cars.models import Cars, Transport
+
 from .filters import TransportsFilter
 from .permissions import IsOwnerOrReadOnly
 from .serializers import CarsSerializer, TransportsSerializer
-from cars.models import Cars, Transport
 
 
 class TransportList(generics.ListAPIView):

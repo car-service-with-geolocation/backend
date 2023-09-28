@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
 
+from autoservice.models import Job
+
 from .filters import JobsFilter
 from .serializers import JobsSerializer
-from autoservice.models import Job
 
 
 class JobsList(generics.ListAPIView):

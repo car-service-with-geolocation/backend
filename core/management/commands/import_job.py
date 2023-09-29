@@ -1,12 +1,12 @@
-import csv 
-import os 
- 
-from django.conf import settings 
-from django.core.management.base import BaseCommand 
- 
+import csv
+import os
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
 from autoservice.models import Job
- 
- 
+
+
 def process_file(name: str): 
     return csv.reader(open(os.path.join( 
         settings.BASE_DIR, 'static/data/', name), 

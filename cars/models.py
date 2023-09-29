@@ -1,46 +1,48 @@
 from colorfield.fields import ColorField
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.db import models
 
 from users.models import CustomUser as User
-# User = get_user_model()
 
 
 class Transport(models.Model):
-    """Модель для базы данных брендов/моделей авто"""
+    """
+    Модель для базы данных брендов/моделей авто
+    """
 
-    brand = models.CharField( 
-        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND, 
-        verbose_name='Название бренда' 
+    brand = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
+        verbose_name='Название бренда'
     )
-    slug = models.CharField( 
-        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG, 
-        verbose_name='Уникальный Slug' 
+    slug = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG,
+        verbose_name='Уникальный Slug'
     )
-    # model = models.CharField( 
-    #     max_length=settings.MAX_LENGTH_TRANSPORT_MODEL, 
-    #     verbose_name='Название модели' 
-    # ) 
-    # image = models.ImageField( 
-    #     'Изображение автомобиля', 
-    #     upload_to='transports/'  
-    # ) 
- 
-    class Meta: 
-        ordering = ('brand', ) 
-        verbose_name = 'Бренд' 
+    # model = models.CharField(
+    #     max_length=settings.MAX_LENGTH_TRANSPORT_MODEL,
+    #     verbose_name='Название модели'
+    # )
+    # image = models.ImageField(
+    #     'Изображение автомобиля',
+    #     upload_to='transports/'
+    # )
+
+    class Meta:
+        ordering = ('brand', )
+        verbose_name = 'Бренд'
         verbose_name_plural = 'Бренды'
-        # constraints = [models.UniqueConstraint( 
-        #                fields=('brand', 'model'), 
+        # constraints = [models.UniqueConstraint(
+        #                fields=('brand', 'model'),
         #                name='unique_transport')]
- 
-    def __str__(self): 
+
+    def __str__(self):
         return f'{self.brand}'
 
 
 class Cars(models.Model):
-    """Модель с общей информацией об автомобиле"""
+    """
+    Модель с общей информацией об автомобиле
+    """
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -83,4 +85,4 @@ class Cars(models.Model):
         verbose_name_plural = 'Автомобили'
 
     def __str__(self):
-        return f'{self.car},{self.number_of_car}'
+        return f'{self.car}, {self.number_of_car}'

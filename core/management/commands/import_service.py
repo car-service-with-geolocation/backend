@@ -1,15 +1,16 @@
-import csv 
-import os 
+import csv
+import os
 import random
- 
-from django.conf import settings 
-from django.core.management.base import BaseCommand
- 
-from autoservice.models import AutoService, Company, City, GeolocationAutoService
-from core.utils import process_file
 from csv import reader
- 
- 
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from autoservice.models import (AutoService, City, Company,
+                                GeolocationAutoService)
+from core.utils import process_file
+
+
 class Command(BaseCommand): 
     """
     Импорт данных давтосервисов из CSV.

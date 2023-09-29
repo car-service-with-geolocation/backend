@@ -1,8 +1,8 @@
-from django.urls import path, include
-from django.conf.urls.static import static
 from django.conf import settings
-from .v1 import urls as v1_urls
+from django.conf.urls.static import static
+from django.urls import include, path
 
+from api.v1 import urls as v1_urls
 
 app_name = 'api'
 

@@ -19,7 +19,10 @@
 #
 #         try:
 #             user = CustomUser.objects.get(
-#                 Q(username=username) | Q(email=username) | Q(phone=username) | Q(telegram_id=username)
+#                 Q(username=username) |
+#                 Q(email=username) |
+#                 Q(phone=username) |
+#                 Q(telegram_id=username)
 #             )
 #         except CustomUser.DoesNotExist:
 #             return None

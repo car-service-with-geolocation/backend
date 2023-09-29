@@ -1,8 +1,9 @@
-from . import views
-from django.urls import path, include
-from rest_framework.routers import SimpleRouter
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
+
+from . import views
 
 router = SimpleRouter()
 router.register(
@@ -15,11 +16,11 @@ router.register(
     views.AutoServiceViewSet,
     basename='service'
 )
-#router.register(
-#    r'service/(?P<autoservice_id>\d+)/feedback',
-#    views.FeedbackViewSet,
-#    basename='feedback'
-#)
+# router.register(
+#     r'service/(?P<autoservice_id>\d+)/feedback',
+#     views.FeedbackViewSet,
+#     basename='feedback'
+# )
 
 urlpatterns = [
     path('', include(router.urls)),

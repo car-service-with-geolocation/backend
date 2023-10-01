@@ -1,5 +1,5 @@
 @service = http://127.0.0.1:8000/api/v1/autoservice/service/
-@service_id = http://127.0.0.1:8000/api/v1/autoservice/service/12/
+@service_id = http://127.0.0.1:8000/api/v1/autoservice/service/11/
 @filter_service = http://127.0.0.1:8000/api/v1/autoservice/service/?latitude=60&longitude=60
 @feedback = http://127.0.0.1:8000/api/v1/autoservice/service/2/feedback/
 

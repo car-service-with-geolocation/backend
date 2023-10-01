@@ -154,7 +154,7 @@ class City(models.Model):
     """Данные городов с их координатами."""
     rus_name = models.CharField(
         'Город на русском языке',
-        max_length=255
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD
     )
     geolocation = models.ForeignKey(
         GeolocationCity,
@@ -182,7 +182,7 @@ class Company(models.Model):
     которые могут производить ремонты автомобилей.
     """
     title = models.CharField(
-        max_length=250,
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD,
         unique=True,
         verbose_name="Название компании по ремонту",
         help_text="Укажите название компании"
@@ -286,7 +286,7 @@ class AutoService(models.Model):
         help_text='Укажите город'
     )
     working_time_text = models.CharField(
-        max_length=250,
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD,
         verbose_name="Текстовое описание рабочего времени",
         blank=True,
         null=True,

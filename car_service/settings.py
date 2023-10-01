@@ -73,7 +73,7 @@ TEMPLATES = [
 
 
 # Database settings
-if not DEVELOPMENT:
+if DEVELOPMENT:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -176,6 +176,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+DEFAULT_MAXLEN_CHARFIELD = 250
 
 # Constants settings cars.apps
 MAX_LENGTH_TRANSPORT_SLUG = 150

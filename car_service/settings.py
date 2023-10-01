@@ -73,7 +73,7 @@ TEMPLATES = [
 
 
 # Database settings
-if DEVELOPMENT:
+if not DEVELOPMENT:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

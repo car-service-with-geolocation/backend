@@ -38,8 +38,6 @@ class Command(BaseCommand):
                 company=obj_company,
                 address=row[1],
                 geolocation=obj_geo,
-                rating=row[8],
-                votes=row[9],
                 city=obj_city,
                 openfrom=row[2],
                 openuntil=row[3],

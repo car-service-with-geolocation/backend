@@ -1,5 +1,5 @@
-from django.db.models import F
-from django.db.models.functions import ASin, Cos, Power, Radians, Sin, Sqrt
+from django.db.models import F, Avg, Count, Min, Sum
+from django.db.models.functions import ASin, Coalesce, Cos, Power, Radians, Sin, Sqrt
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
@@ -7,8 +7,12 @@ from rest_framework.permissions import AllowAny
 from autoservice.models import AutoService, Company
 from core.utils import is_float
 
-from .serializers import (AutoServiceSerializer, CompanySerializer,
-                          FeedbackSerializer)
+from .serializers import (
+    AutoServiceSerializer,
+    CompanySerializer,
+    FeedbackSerializer
+)
+from .permissions import IsAuthorOrAdminReadOnly
 
 
 class CompanyViewset(viewsets.ReadOnlyModelViewSet):
@@ -35,14 +39,11 @@ class AutoServiceViewSet(
 
     def get_queryset(self):
         queryset = AutoService.objects.select_related(
-            "geolocation"
+                "geolocation"
+            ).annotate(
+                rating=Avg('feedback__score'),
+                votes=Count('feedback__score')
         ).order_by('-rating')
-        # queryset = AutoService.objects.select_related(
-        #     "geolocation"
-        #     ).annotate(
-        #        newrating=Avg('feedback__score'),
-        #        newvotes=Count('feedback__score')
-        # ).order_by('-rating')
         if (
             'latitude' in self.request.query_params
             and 'longitude' in self.request.query_params
@@ -75,6 +76,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = FeedbackSerializer
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    permission_classes = [IsAuthorOrAdminReadOnly]
 
     def get_autoservice(self):
         return get_object_or_404(
@@ -83,7 +86,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         )
 
     def get_queryset(self):
-        return self.get_autoservice().feedbacks.all()
+        return self.get_autoservice().feedback.all()
 
     def perform_create(self, serializer):
         serializer.save(

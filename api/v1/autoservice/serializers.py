@@ -62,8 +62,8 @@ class AutoServiceSerializer(serializers.ModelSerializer):
     car_service = TransportsSerializer(many=True)
     job = serializers.SerializerMethodField()
 
-    # rating = serializers.FloatField(read_only=True)
-    # votes = serializers.IntegerField(read_only=True)
+    rating = serializers.FloatField(read_only=True)
+    votes = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = AutoService
@@ -94,11 +94,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Feedback.
     """
-    # author = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='username',
-    #     default=serializers.CurrentUserDefault()
-    # )
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
 
     def validate(self, data):
         if self.context['request'].method != 'POST':
@@ -119,7 +119,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         model = Feedback
         fields = (
             'id',
-            # 'author',
+            'author',
             'text',
             'score',
             'pub_date',

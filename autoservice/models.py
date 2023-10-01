@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.validators import ASCIIUsernameValidator
-from django.core.validators import (MaxValueValidator, MinValueValidator,
-                                    RegexValidator)
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator
+)
 from django.db import models
-
 from cars.models import Transport
+
 
 User = get_user_model()
 
@@ -29,7 +32,7 @@ class GeolocationCity(models.Model):
         verbose_name_plural = "Геолокация городов РФ"
         constraints = [
             models.UniqueConstraint(
-                fields=['latitude', 'longitude'], name='unique_city'
+                fields=['latitude', 'longitude'], name='unique_geo_city'
             )
         ]
 
@@ -53,6 +56,11 @@ class City(models.Model):
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города РФ"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['rus_name', 'geolocation'], name='unique_city'
+            )
+        ]
 
 
 class Company(models.Model):
@@ -62,6 +70,7 @@ class Company(models.Model):
     """
     title = models.CharField(
         max_length=250,
+        unique=True,
         verbose_name="Название компании по ремонту",
         help_text="Укажите название компании"
     )
@@ -107,18 +116,19 @@ class GeolocationAutoService(models.Model):
         verbose_name_plural = "Геолокация автосервисов РФ"
         constraints = [
             models.UniqueConstraint(
-                fields=['latitude', 'longitude'], name='unique_geoservice'
+                fields=['latitude', 'longitude'], name='unique_geo_service'
             )
         ]
 
 
 class Job(models.Model):
     """
-    Модель работ выполняемых автосервисами
+    Модель работ выполняемых автосервисами.
     """
     title = models.CharField(
         max_length=settings.MAX_LENGTH_JOBS_NAME,
-        verbose_name='Название работы'
+        verbose_name='Название работы',
+        unique=True,
     )
     description = models.CharField(
         null=True,
@@ -137,7 +147,7 @@ class Job(models.Model):
 
 class AutoService(models.Model):
     """
-    Модель автосервиса
+    Модель автосервиса.
     """
     company = models.ForeignKey(
         Company,
@@ -161,18 +171,6 @@ class AutoService(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Город',
         help_text='Укажите город'
-    )
-    rating = models.PositiveSmallIntegerField(
-        validators=[
-            MinValueValidator(1, message='Оценка ниже 1 невозможна'),
-            MaxValueValidator(5, message='Оценка выше 5 невозможна')
-        ],
-        verbose_name='Рейтинг автосервиса',
-        help_text='Укажите рейтинг автосервиса'
-    )
-    votes = models.PositiveSmallIntegerField(
-        verbose_name='Количество отзывов автосервиса',
-        help_text='Укажите количество отзывов на автосервис'
     )
     openfrom = models.CharField(
         verbose_name='Начало работы',
@@ -221,35 +219,21 @@ class AutoService(models.Model):
         ],
         help_text="Введите номер телефона",
         null=True,
-        # unique=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        # unique=True,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
-        # error_messages={
-        #    'unique': 'Автосервис с такой почтой уже существует',
-        # },
     )
     site = models.CharField(
         verbose_name='Сайт автосервиса',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        # unique=True,
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"
         ),
-        # validators=[
-        #    RegexValidator(
-        #        r'^(https?|ftp)://[^\s/$.?#].[^\s]*$$',
-        #        message=(
-        #            "Ошибка ввода, используйте формат: 'www.example.com'"
-        #        )
-        #    )
-        # ],
     )
     job = models.ManyToManyField(
         Job,
@@ -301,18 +285,23 @@ class AutoserviceJob(models.Model):
     class Meta:
         verbose_name = "работу"
         verbose_name_plural = "Работы и прайсы автосервисов"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['service', 'job'], name='unique_service_job'
+            )
+        ]
 
 
 class Feedback(models.Model):
     """
     Модель отзыва пользователя на автосервис
     """
-    # author = models.ForeignKey(
-    #     User,
-    #     on_delete=models.CASCADE,
-    #     related_name='feedbacks',
-    #     verbose_name='Автор отзыва',
-    # )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='feedback',
+        verbose_name='Автор отзыва',
+    )
     autoservice = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
@@ -336,11 +325,11 @@ class Feedback(models.Model):
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=['author', 'autoservice'], name='unique_feedback'
-        #     )
-        # ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'autoservice'], name='unique_feedback'
+            )
+        ]
 
     def __str__(self) -> str:
         return f'{self.text[:25]}'

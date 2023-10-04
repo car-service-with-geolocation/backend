@@ -4,64 +4,80 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
+from rest_framework.exceptions import ParseError
 
 
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self,
-                     username=None,
-                     email=None,
-                     phone=None,
-                     telegram_id=None,
-                     password=None,
-                     **extra_fields
-                     ):
-        if not username:
-            if not email and not phone and not telegram_id:
-                raise ValueError(
-                    'Требуется ввести почту или номер телефона для регистрации'
+    def _create_user(
+            self,
+            username=None,
+            email=None,
+            phone_number=None,
+            password=None,
+            **extra_fields
+            ):
+        """
+        Создает и сохраняет пользователя в зависимости от варианта регистрации
+        """
+        if not (email or phone_number):
+            raise ParseError(
+                'Поле телефон или электронная почта должно быть заполнено'
                 )
         if email:
             email = self.normalize_email(email)
 
-            if not username:
-                username = email
+        if not username:
+            if email:
+                username = email.split('@')[0]
+            else:
+                username = phone_number
 
-            user = self.model(
-                email=email,
-                username=username,
-                **extra_fields)
-
-        if phone:
-            if not username:
-                username = phone
-
-            user = self.model(
-                phone=phone,
-                username=username,
-                **extra_fields)
-
-        if extra_fields.get('is_superuser'):
-            user = self.model(
-                username=username,
-                **extra_fields
-            )
+        user = self.model(
+            username=username,
+            **extra_fields
+        )
+        if email:
+            user.email = email
+        if phone_number:
+            user.phone = phone_number
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, username, email, password=None, **extra_fields):
+    def create_user(
+            self,
+            username=None,
+            email=None,
+            phone_number=None,
+            password=None,
+            **extra_fields
+            ):
+        """
+        Создает и сохраняет пользователя
+        """
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(
+            phone_number=phone_number,
             username=username,
             email=email,
             password=password,
             **extra_fields
         )
 
-    def create_superuser(self, username, password, **extra_fields):
+    def create_superuser(
+            self,
+            username=None,
+            email=None,
+            phone_number=None,
+            password=None,
+            **extra_fields
+            ):
+        """
+        Создает и сохраняет супер-пользователя
+        """
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_active', True)
@@ -71,8 +87,10 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(
+        return self._create_user(
+            phone_number=phone_number,
             username=username,
+            email=email,
             password=password,
             **extra_fields
         )
@@ -81,12 +99,14 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', ]
 
     username = models.CharField(
         verbose_name='Имя пользователя',
         max_length=settings.USERNAME_MAX_LENGTH,
         unique=True,
+        null=True,
+        blank=True,
         help_text=(
             'Введите уникальное имя пользователя. Максимум 40 символов.'
             'Используйте только английские буквы, цифры и символы @/./+/-/_'
@@ -108,34 +128,33 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'unique': 'Пользователь с такой почтой уже существует',
         },
     )
-
-    telegram_id = models.PositiveIntegerField(
-        verbose_name='Идентификатор телеграма',
-        unique=True,
-        blank=True,
-        null=True)
     last_name = models.CharField(
         verbose_name='Фамилия',
+        null=True,
+        blank=True,
         max_length=settings.LAST_NAME_MAX_LENGTH,
         help_text='Введите фамилию'
     )
 
     first_name = models.CharField(
         verbose_name='Имя',
+        null=True,
+        blank=True,
         max_length=settings.FIRST_NAME_MAX_LENGTH,
         help_text='Введите имя'
     )
 
     phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
-        validators=[
-            RegexValidator(
-                r'^(\+7|8)[0-9]{10}$',
-                "Введите номер телефона в формате: '+79995553322'",
-            )
-        ],
+        blank=True,
+        null=True,
+        # validators=[
+        #     RegexValidator(
+        #         r'^(\+7|8)[0-9]{10}$',
+        #         "Введите номер телефона в формате: '+79995553322'",
+        #     )
+        # ],
         help_text="Введите номер телефона",
-        unique=True,
     )
 
     date_joined = models.DateTimeField(
@@ -144,7 +163,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     image = models.ImageField(
-        default=False,
+        blank=True,
+        null=True,
         verbose_name='Картинка',
         upload_to='users/images/',
         help_text='Выберите картинку профиля',
@@ -162,9 +182,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='Статус пользователя',
         default=False
     )
-    # order = ForeignKey(Order)
-    # favorite = ManyToMany(Service)
-    # comment = ManyToMany(Comment)
 
     objects = CustomUserManager()
 

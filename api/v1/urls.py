@@ -2,16 +2,14 @@ from django.urls import include, path
 
 from .autoservice import urls as urls_autoservice
 from .core import urls as urls_core
-# from .users import urls as urls_users
+from .users import urls as urls_users
 from .jobs import urls as urls_jobs
 
 urlpatterns = [
     path('autoservice/', include(urls_autoservice)),
     path('core/', include(urls_core)),
     path('jobs/', include(urls_jobs)),
-
-    # Отключены на MVP @OrdinaryWorker
-    # path('users/', include(urls_users)),
-    # path('auth/', include('djoser.urls')),
-    # path('auth/', include('djoser.urls.jwt')),
+    path('auth/', include(urls_users)),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
 ]

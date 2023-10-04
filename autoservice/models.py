@@ -13,10 +13,9 @@ from cars.models import Transport
 User = get_user_model()
 
 
-
 class WorkTimeRange(models.Model):
     """
-    Модель поисывающая интервал рабочего времени за день.
+    Модель, показывающая интервал рабочего времени за день.
     """
     openfrom = models.CharField(
         verbose_name='Начало работы',
@@ -51,7 +50,7 @@ class WorkTimeRange(models.Model):
 
     def __str__(self) -> str:
         return f"{self.openfrom} - {self.openuntil}"
-    
+
     class Meta:
         verbose_name = "диапазон рабочего времени"
         verbose_name_plural = "Диапазон рабочего времени"
@@ -120,7 +119,7 @@ class WorkingTime(models.Model):
 
     def __str__(self) -> str:
         return f"Рабочий график {self.id}"
-    
+
     class Meta:
         verbose_name = "рабочий график"
         verbose_name_plural = "Рабочие графики"
@@ -352,7 +351,7 @@ class AutoService(models.Model):
 
 class AutoserviceJob(models.Model):
     """
-    Модель для связи модели автосервиса и модели работы
+    Модель для связи модели автосервиса и модели работы.
     """
     service = models.ForeignKey(
         AutoService,
@@ -388,7 +387,8 @@ class AutoserviceJob(models.Model):
 
 class Feedback(models.Model):
     """
-    Модель отзыва пользователя на автосервис
+    Класс Feedback представляет модель отзыва на автосервис,
+    который может быть оставлен пользователем.
     """
     author = models.ForeignKey(
         User,
@@ -400,9 +400,12 @@ class Feedback(models.Model):
         AutoService,
         on_delete=models.CASCADE,
         related_name='feedback',
-        verbose_name='Автосервис'
+        verbose_name='Автосервис, на который пользователь пишет отзыв'
     )
-    text = models.TextField(verbose_name='Текст отзыва')
+    text = models.TextField(
+        verbose_name='Текст отзыва',
+        help_text='Напишите ваш отзыв тут'
+    )
     score = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message='Оценка ниже 1 невозможна'),

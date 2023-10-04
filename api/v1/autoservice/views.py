@@ -38,12 +38,16 @@ class AutoServiceViewSet(
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        queryset = AutoService.objects.select_related(
-                "geolocation"
-            ).annotate(
+        queryset = (
+            AutoService
+            .objects
+            .select_related("geolocation")
+            .annotate(
                 rating=Avg('feedback__score'),
                 votes=Count('feedback__score')
-        ).order_by('-rating')
+            )
+            .order_by('-rating')
+        )
         if (
             'latitude' in self.request.query_params
             and 'longitude' in self.request.query_params
@@ -72,9 +76,8 @@ class AutoServiceViewSet(
 
 class FeedbackViewSet(viewsets.ModelViewSet):
     """
-    ViewSet для модели отзывов Feedback
+    ViewSet для модели отзывов Feedback.
     """
-
     serializer_class = FeedbackSerializer
     http_method_names = ('get', 'post', 'patch', 'delete')
     permission_classes = [IsAuthorOrAdminReadOnly]

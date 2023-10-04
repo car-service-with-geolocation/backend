@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, filters
 
-from cars.models import Transport
+from autoservice.models import Transport
 
 
 class TransportsFilter(FilterSet):

@@ -4,6 +4,7 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from . import views
+from .views import TransportDetail, TransportList
 
 router = SimpleRouter()
 router.register(
@@ -24,6 +25,8 @@ router.register(
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('car_models', TransportList.as_view(), name='transport-list'),
+    path('car_models/<int:pk>/', TransportDetail.as_view(), name='transport-detail'),
 ]
 
 if settings.DEBUG:

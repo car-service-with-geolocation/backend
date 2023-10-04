@@ -7,11 +7,32 @@ from django.core.validators import (
     RegexValidator
 )
 from django.db import models
-from cars.models import Transport
 
 
 User = get_user_model()
 
+
+class Transport(models.Model):
+    """
+    Модель для базы данных брендов/моделей авто
+    """
+
+    brand = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
+        verbose_name='Название бренда'
+    )
+    slug = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG,
+        verbose_name='Уникальный Slug'
+    )
+
+    class Meta:
+        ordering = ('brand', )
+        verbose_name = 'Бренд'
+        verbose_name_plural = 'Бренды'
+
+    def __str__(self):
+        return f'{self.brand}'
 
 
 class WorkTimeRange(models.Model):

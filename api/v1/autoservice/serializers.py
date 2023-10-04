@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from api.v1.cars.serializers import TransportsSerializer
 from autoservice.models import (
     AutoService,
     AutoserviceJob,
@@ -10,9 +9,16 @@ from autoservice.models import (
     Company,
     Feedback,
     GeolocationAutoService,
+    Transport,
     WorkTimeRange,
     WorkingTime,
 )
+
+class TransportsSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка брендов/моделей автомобилей"""
+    class Meta:
+        model = Transport
+        fields = ('id', 'brand', 'slug')
 
 
 class CompanySerializer(serializers.ModelSerializer):

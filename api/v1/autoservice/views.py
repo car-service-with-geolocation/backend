@@ -1,18 +1,41 @@
 from django.db.models import F, Avg, Count, Min, Sum
 from django.db.models.functions import ASin, Coalesce, Cos, Power, Radians, Sin, Sqrt
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import mixins, viewsets
+from rest_framework import filters, generics, mixins, viewsets
 from rest_framework.permissions import AllowAny
 
-from autoservice.models import AutoService, Company
+from autoservice.models import AutoService, Company, Transport
 from core.utils import is_float
 
+from .filters import TransportsFilter
 from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
-    FeedbackSerializer
+    FeedbackSerializer,
+    TransportsSerializer
 )
 from .permissions import IsAuthorOrAdminReadOnly
+
+class TransportList(generics.ListAPIView):
+    """
+    Вьюсет для чтения информации о компаниях по ремонту авто.
+    """
+
+    queryset = Transport.objects.all()
+    serializer_class = TransportsSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_class = TransportsFilter
+    search_fields = ('brand', )
+
+
+class TransportDetail(generics.RetrieveAPIView):
+    """
+    Вьюсет для чтения информации о компаниях по ремонту авто.
+    """
+
+    queryset = Transport.objects.all()
+    serializer_class = TransportsSerializer
 
 
 class CompanyViewset(viewsets.ReadOnlyModelViewSet):

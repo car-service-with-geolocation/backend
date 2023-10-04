@@ -29,10 +29,8 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'corsheaders',
-    'colorfield',
     'api.apps.ApiConfig',
     'autoservice.apps.AutoserviceConfig',
-    'cars.apps.CarsConfig',
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
 ]

@@ -114,8 +114,8 @@ DJOSER = {
         'current_user': 'api.v1.users.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
-        'user_list': ['rest_framework.permissions.IsAdminUser'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': True,
@@ -142,6 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
+AUTHENTICATION_BACKENDS = ('users.backends.AuthBackend', )
 ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
 
 

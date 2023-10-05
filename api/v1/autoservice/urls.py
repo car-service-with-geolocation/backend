@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
@@ -26,5 +24,8 @@ router.register(
 urlpatterns = [
     path('', include(router.urls)),
     path('car_models', TransportList.as_view(), name='transport-list'),
-    path('car_models/<int:pk>/', TransportDetail.as_view(), name='transport-detail'),
+    path('car_models/<int:pk>/',
+         TransportDetail.as_view(),
+         name='transport-detail'
+         ),
 ]

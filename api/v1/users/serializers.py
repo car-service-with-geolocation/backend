@@ -1,5 +1,5 @@
 from djoser.serializers import UserSerializer
-from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 
 from users.models import CustomUser
 
@@ -8,13 +8,17 @@ class CustomUserSerializer(UserSerializer):
     """
     Сериализатор для модели пользователя CustomUser
     """
-    # image = Base64ImageField()
+    password = serializers.CharField(
+        style={"input_type": "password"},
+        write_only=True
+    )
 
     class Meta:
         model = CustomUser
         fields = ('id',
                   'email',
                   'username',
+                  'password',
                   'last_name',
                   'first_name',
                   'phone_number',

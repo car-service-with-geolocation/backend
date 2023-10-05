@@ -1,5 +1,12 @@
-from django.db.models import F, Avg, Count, Min, Sum
-from django.db.models.functions import ASin, Coalesce, Cos, Power, Radians, Sin, Sqrt
+from django.db.models import F, Avg, Count
+from django.db.models.functions import (
+    ASin,
+    Cos,
+    Power,
+    Radians,
+    Sin,
+    Sqrt
+)
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, mixins, viewsets
@@ -16,6 +23,7 @@ from .serializers import (
     TransportsSerializer
 )
 from .permissions import IsAuthorOrAdminReadOnly
+
 
 class TransportList(generics.ListAPIView):
     """

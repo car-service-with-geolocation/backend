@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -7,7 +8,6 @@ load_dotenv()
 
 
 # COMMON SETTINGS
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
@@ -94,7 +94,7 @@ else:
 # DRF settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -103,6 +103,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
@@ -110,10 +111,12 @@ DJOSER = {
     "SERIALIZERS": {
         'user': 'api.v1.users.serializers.CustomUserSerializer',
         'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+        'user_create': 'api.v1.users.serializers.CustomUserSerializer',
+        'user_create_password_retype': 'api.v1.users.serializers.CustomUserSerializer'
     },
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.AllowAny'],
-        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.IsAdmin'],
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': True,
@@ -196,14 +199,3 @@ EMAIL_MAX_LENGTH = 80
 PHONE_MAX_LENGTH = 12
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
-
-# Constants autoservice.apps
-DAY_CHOICES = (
-    ('1', 'Понедельник'),
-    ('2', 'Вторник'),
-    ('3', 'Среда'),
-    ('4', 'Четверг'),
-    ('5', 'Пятница'),
-    ('6', 'Суббота'),
-    ('7', 'Воскресенье'),
-)

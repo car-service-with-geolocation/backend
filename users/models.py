@@ -99,7 +99,6 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', ]
 
     username = models.CharField(
         verbose_name='Имя пользователя',
@@ -148,12 +147,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=settings.PHONE_MAX_LENGTH,
         blank=True,
         null=True,
-        # validators=[
-        #     RegexValidator(
-        #         r'^(\+7|8)[0-9]{10}$',
-        #         "Введите номер телефона в формате: '+79995553322'",
-        #     )
-        # ],
+        validators=[
+            RegexValidator(
+                r'^(\+7|8)[0-9]{10}$',
+                "Введите номер телефона в формате: '+79995553322'",
+            )
+        ],
         help_text="Введите номер телефона",
     )
 

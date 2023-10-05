@@ -19,6 +19,9 @@ class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
+    def get_serializer_context(self):
+        return {'request': None}
+
 
 class AutoServiceViewSet(
     viewsets.GenericViewSet,
@@ -32,6 +35,9 @@ class AutoServiceViewSet(
 
     serializer_class = AutoServiceSerializer
     permission_classes = [AllowAny]
+
+    def get_serializer_context(self):
+        return {'request': None}
 
     def get_queryset(self):
         queryset = AutoService.objects.select_related(

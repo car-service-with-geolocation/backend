@@ -28,7 +28,3 @@ urlpatterns = [
     path('car_models', TransportList.as_view(), name='transport-list'),
     path('car_models/<int:pk>/', TransportDetail.as_view(), name='transport-detail'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)

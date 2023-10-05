@@ -25,8 +25,6 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     Сериализатор для компаний автосервисов.
     """
-    logo = Base64ImageField()
-
     class Meta:
         model = Company
         fields = [

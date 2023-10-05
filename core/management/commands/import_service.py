@@ -39,8 +39,6 @@ class Command(BaseCommand):
                 address=row[1],
                 geolocation=obj_geo,
                 city=obj_city,
-                openfrom=row[2],
-                openuntil=row[3],
                 site=row[6]
             ) 
         self.stdout.write('Импорт автосервсов прошел успешно.')

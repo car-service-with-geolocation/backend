@@ -12,8 +12,6 @@ from django.db import models
 User = get_user_model()
 
 
-<<<<<<< HEAD
-=======
 class Transport(models.Model):
     """
     Модель для базы данных брендов/моделей авто
@@ -37,7 +35,6 @@ class Transport(models.Model):
         return f'{self.brand}'
 
 
->>>>>>> 3935fb4d40a316d6e20462a47371fd2b4c5478e3
 class WorkTimeRange(models.Model):
     """
     Модель, показывающая интервал рабочего времени за день.

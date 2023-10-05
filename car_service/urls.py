@@ -12,7 +12,7 @@ router = DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls', namespace='api')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Add auto generated OpenApi schema
 schema_view = get_schema_view(

@@ -11,8 +11,6 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     Сериализатор для компаний автосервисов.
     """
-    logo = serializers.SerializerMethodField()
-
     class Meta:
         model = Company
         fields = [
@@ -22,9 +20,6 @@ class CompanySerializer(serializers.ModelSerializer):
             'logo',
             'legal_address',
         ]
-
-    def get_logo(self, obj):
-        return str(get_object_or_404(Company, pk=obj.id).logo)
 
 
 class GeolocationAutoServiceSerializer(serializers.ModelSerializer):

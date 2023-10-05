@@ -3,6 +3,10 @@ from django.db.models import Q
 
 
 class AuthBackend(object):
+    """
+    Кастомная авторизация, позволяющая выполнять вход по любому из полей
+    телефон, электронная почта, имя пользоватяля
+    """
     supports_object_permissions = True
     supports_anonymous_user = False
     supports_inactive_user = False

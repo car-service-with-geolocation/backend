@@ -6,6 +6,7 @@ from .serializers import CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
+    serializer = CustomUserSerializer
 
     def create(self, request, *args, **kwargs):
         registration_by_phone = request.data.get('phone_number', None)

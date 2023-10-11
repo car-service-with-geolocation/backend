@@ -1,4 +1,4 @@
-from .views import CustomUserViewSet
+from .views import CustomUserViewSet, CustomUserActivation
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
@@ -11,5 +11,9 @@ router.register(
 )
 
 urlpatterns = [
+    path('users/activate/<slug:uid>/<slug:token>/',
+         CustomUserActivation.as_view(),
+         name='user_activation'
+         ),
     path('', include(router.urls)),
 ]

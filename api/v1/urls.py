@@ -10,6 +10,6 @@ urlpatterns = [
     path('core/', include(urls_core)),
     path('jobs/', include(urls_jobs)),
     path('auth/', include(urls_users)),
-    path('auth/', include('djoser.urls')),
+    # path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 ]

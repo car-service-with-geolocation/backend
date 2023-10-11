@@ -1,11 +1,19 @@
 from djoser.views import UserViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import requests
 
 from .serializers import CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
+    """
+    Вьюсет предоставляет весь функционал CRUD для модели CustomUser
+    Вьюсет наследует стандартный UserViewSet из Djoser с последующим
+    переопределением метода create для регистрации пользователей по номеру
+    телефона.
+    """
     serializer = CustomUserSerializer
 
     def create(self, request, *args, **kwargs):
@@ -30,3 +38,21 @@ class CustomUserViewSet(UserViewSet):
 
     # def perform_create(self, serializer):
         # TO DO
+
+
+class CustomUserActivation(APIView):
+    """
+    Вью-функция предназначена для автоматизации активации пользователя при
+    переходе по ссылке для подтверждения почты путем передачи параметров
+    GET-запроса в теле POST-запроса на стандартный url Djoser
+    """
+    def get(self, request, uid, token):
+        data = {
+            "uid": uid,
+            "token": token
+        }
+        response = requests.post(
+            "http://127.0.0.1:8000/api/v1/auth/users/activation/",
+            data=data
+        )
+        return Response(status=response.status_code)

@@ -94,7 +94,7 @@ else:
 # DRF settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -123,7 +123,7 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
-    'ACTIVATION_URL': 'v1/auth/users/activation/{uid}/{token}/',
+    'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
 }
 
 

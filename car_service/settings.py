@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'autoservice.apps.AutoserviceConfig',
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [
@@ -199,3 +200,8 @@ EMAIL_MAX_LENGTH = 80
 PHONE_MAX_LENGTH = 12
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
+
+# Constants order.apps
+MAX_LENGTH_INFO = 200
+MAX_LENGTH_TASK = 200
+MAX_LENGTH_CAR = 50

@@ -2,7 +2,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from order.models import Order
-from order.serializers import OrderSerializer
+from .serializers import OrderSerializer
+
 
 class OrderListAPIView(generics.ListCreateAPIView):
     queryset = Order.objects.all()

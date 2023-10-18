@@ -22,10 +22,10 @@ router.register(
 )
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('car_models', TransportList.as_view(), name='transport-list'),
     path('car_models/<int:pk>/',
          TransportDetail.as_view(),
          name='transport-detail'
          ),
+    path('', include(router.urls)),
 ]

@@ -110,10 +110,8 @@
 
 ***
 ## Manage команды
-Перед выполнением manage-команды import_service необходимо выполнить manage-команду import_city, т.к. в ней используется город авосервиса.
+При загрузки автосервисов также загружаются - Работы, Автомобили и т.д. (Загрузка занимает несколько минут)
 ```
 python manage.py import_city
-python manage.py import_brand
-python manage.py import_job
-python manage.py import_service
+python manage.py import_autoservice
 ```

@@ -1,13 +1,15 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from autoservice.models import Job
-from users.models import CustomUser
+
+User = get_user_model()
 
 class Order(models.Model):
     """Модель заявки для авторизованного пользователя"""
     owner = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.CASCADE,
         verbose_name="Заказчик"
     )

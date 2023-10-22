@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
     'djoser',
     'django_filters',
@@ -98,15 +99,15 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-   'AUTH_HEADER_TYPES': ('Bearer',),
-}
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+#     'AUTH_HEADER_TYPES': ('Bearer',),
+# }
 
 DJOSER = {
     "SERIALIZERS": {
@@ -123,7 +124,6 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'TOKEN_MODEL': None,
     'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
 }
 
@@ -155,10 +155,10 @@ else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.yandex.ru'
     EMAIL_PORT = 465
-    EMAIL_HOST_USER = 'todo'
-    EMAIL_HOST_PASSWORD = 'todo'
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER'),
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD'),
     EMAIL_USE_SSL = True
-    DEFAULT_FROM_EMAIL = 'some_service_email'
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # Internationalization settings

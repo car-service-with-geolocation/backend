@@ -389,6 +389,8 @@ class AutoserviceJob(models.Model):
     )
     price = models.FloatField(
         verbose_name='Стоимость работ',
+        blank=True,
+        null=True,
         validators=[
             MinValueValidator(1, message='Стоимость ниже 1 невозможна'),
         ],

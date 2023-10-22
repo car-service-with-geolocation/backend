@@ -13,8 +13,7 @@ class OrderAdmin(admin.ModelAdmin):
         'owner',
         'car',
         'info',
-        'task',
-        'image'
+        'task'
     )
     search_fields = (
         'owner',
@@ -22,6 +21,7 @@ class OrderAdmin(admin.ModelAdmin):
     )
     list_filter = ('owner',)
     empty_value_display = settings.ADMIN_MODEL_EMPTY_VALUE
+
 
 
 admin.site.register(Order, OrderAdmin)

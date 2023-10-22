@@ -87,6 +87,9 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
+        if not email:
+            email = username + '@admin.ru'
+
         return self._create_user(
             phone_number=phone_number,
             username=username,

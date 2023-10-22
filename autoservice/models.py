@@ -1,13 +1,150 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.validators import ASCIIUsernameValidator
-from django.core.validators import (MaxValueValidator, MinValueValidator,
-                                    RegexValidator)
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator
+)
 from django.db import models
 
-from cars.models import Transport
 
 User = get_user_model()
+
+
+class Transport(models.Model):
+    """
+    Модель для базы данных брендов/моделей авто
+    """
+
+    brand = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
+        verbose_name='Название бренда'
+    )
+    slug = models.CharField(
+        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG,
+        verbose_name='Уникальный Slug'
+    )
+
+    class Meta:
+        ordering = ('brand', )
+        verbose_name = 'Бренд'
+        verbose_name_plural = 'Бренды'
+
+    def __str__(self):
+        return f'{self.brand}'
+
+
+class WorkTimeRange(models.Model):
+    """
+    Модель, показывающая интервал рабочего времени за день.
+    """
+    openfrom = models.CharField(
+        verbose_name='Начало работы',
+        null=True,
+        blank=False,
+        max_length=settings.WORKING_TIME_MAX_LENGTH,
+        help_text=(
+            'Введите время начала рабочего дня автосервиса в формате HH:MM'
+        ),
+        validators=[
+           RegexValidator(
+               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+               'Используйте время в формате HH:MM',
+           )
+        ],
+    )
+    openuntil = models.CharField(
+        verbose_name='Окончание рабочего дня',
+        null=True,
+        blank=False,
+        max_length=settings.WORKING_TIME_MAX_LENGTH,
+        help_text=(
+            'Введите время окончания рабочего дня автосервиса в формате HH:MM'
+        ),
+        validators=[
+           RegexValidator(
+               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
+               'Используйте время в формате HH:MM',
+           )
+        ],
+    )
+
+    def __str__(self) -> str:
+        return f"{self.openfrom} - {self.openuntil}"
+
+    class Meta:
+        verbose_name = "диапазон рабочего времени"
+        verbose_name_plural = "Диапазон рабочего времени"
+
+
+class WorkingTime(models.Model):
+    """
+    Модель описывающая график рабочего времени за неделю.
+    """
+    monday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='monday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в понедельник",
+    )
+    tuesday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='tuesday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы во вторник",
+    )
+    wednesday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='wednesday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в среду",
+    )
+    thursday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='thursday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в четверг",
+    )
+    friday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='friday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в пятницу",
+    )
+    saturday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='saturday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в субботу",
+    )
+    sunday = models.ForeignKey(
+        WorkTimeRange,
+        null=True,
+        blank=True,
+        related_name='sunday',
+        on_delete=models.SET_NULL,
+        verbose_name="Время работы в воскресенье",
+    )
+
+    def __str__(self) -> str:
+        return f"Рабочий график {self.id}"
+
+    class Meta:
+        verbose_name = "рабочий график"
+        verbose_name_plural = "Рабочие графики"
 
 
 class GeolocationCity(models.Model):
@@ -29,7 +166,7 @@ class GeolocationCity(models.Model):
         verbose_name_plural = "Геолокация городов РФ"
         constraints = [
             models.UniqueConstraint(
-                fields=['latitude', 'longitude'], name='unique_city'
+                fields=['latitude', 'longitude'], name='unique_geo_city'
             )
         ]
 
@@ -38,7 +175,7 @@ class City(models.Model):
     """Данные городов с их координатами."""
     rus_name = models.CharField(
         'Город на русском языке',
-        max_length=255
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD
     )
     geolocation = models.ForeignKey(
         GeolocationCity,
@@ -53,6 +190,11 @@ class City(models.Model):
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города РФ"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['rus_name', 'geolocation'], name='unique_city'
+            )
+        ]
 
 
 class Company(models.Model):
@@ -61,7 +203,8 @@ class Company(models.Model):
     которые могут производить ремонты автомобилей.
     """
     title = models.CharField(
-        max_length=250,
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD,
+        unique=True,
         verbose_name="Название компании по ремонту",
         help_text="Укажите название компании"
     )
@@ -107,18 +250,19 @@ class GeolocationAutoService(models.Model):
         verbose_name_plural = "Геолокация автосервисов РФ"
         constraints = [
             models.UniqueConstraint(
-                fields=['latitude', 'longitude'], name='unique_geoservice'
+                fields=['latitude', 'longitude'], name='unique_geo_service'
             )
         ]
 
 
 class Job(models.Model):
     """
-    Модель работ выполняемых автосервисами
+    Модель работ выполняемых автосервисами.
     """
     title = models.CharField(
         max_length=settings.MAX_LENGTH_JOBS_NAME,
-        verbose_name='Название работы'
+        verbose_name='Название работы',
+        unique=True,
     )
     description = models.CharField(
         null=True,
@@ -137,7 +281,7 @@ class Job(models.Model):
 
 class AutoService(models.Model):
     """
-    Модель автосервиса
+    Модель автосервиса.
     """
     company = models.ForeignKey(
         Company,
@@ -162,54 +306,18 @@ class AutoService(models.Model):
         verbose_name='Город',
         help_text='Укажите город'
     )
-    rating = models.PositiveSmallIntegerField(
-        validators=[
-            MinValueValidator(1, message='Оценка ниже 1 невозможна'),
-            MaxValueValidator(5, message='Оценка выше 5 невозможна')
-        ],
-        verbose_name='Рейтинг автосервиса',
-        help_text='Укажите рейтинг автосервиса'
-    )
-    votes = models.PositiveSmallIntegerField(
-        verbose_name='Количество отзывов автосервиса',
-        help_text='Укажите количество отзывов на автосервис'
-    )
-    openfrom = models.CharField(
-        verbose_name='Начало работы',
+    working_time_text = models.CharField(
+        max_length=settings.DEFAULT_MAXLEN_CHARFIELD,
+        verbose_name="Текстовое описание рабочего времени",
+        blank=True,
         null=True,
-        max_length=settings.WORKING_TIME_MAX_LENGTH,
-        help_text=(
-            'Введите время начала рабочего дня автосервиса в формате HH:MM'
-        ),
-        validators=[
-           RegexValidator(
-               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
-               'Используйте время в формате HH:MM',
-           )
-        ],
     )
-    openuntil = models.CharField(
-        verbose_name='Окончание рабочего дня',
+    working_time = models.ForeignKey(
+        WorkingTime,
         null=True,
-        max_length=settings.WORKING_TIME_MAX_LENGTH,
-        help_text=(
-            'Введите время окончания рабочего дня автосервиса в формате HH:MM'
-        ),
-        validators=[
-           RegexValidator(
-               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
-               'Используйте время в формате HH:MM',
-           )
-        ],
-    )
-    holidays = models.CharField(
-        verbose_name='Выходной день',
-        help_text=(
-            'Укажите выходной день'
-        ),
-        max_length=1,
-        choices=settings.DAY_CHOICES,
-        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text='График работы автосервиса'
     )
     phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
@@ -221,44 +329,35 @@ class AutoService(models.Model):
         ],
         help_text="Введите номер телефона",
         null=True,
-        # unique=True,
+        blank=True,
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        # unique=True,
+        blank=True,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
-        # error_messages={
-        #    'unique': 'Автосервис с такой почтой уже существует',
-        # },
     )
     site = models.CharField(
         verbose_name='Сайт автосервиса',
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
-        # unique=True,
+        blank=True,
         help_text=(
             "Введите адрес сайта автосервиса в формате 'www.example.com'"
         ),
-        # validators=[
-        #    RegexValidator(
-        #        r'^(https?|ftp)://[^\s/$.?#].[^\s]*$$',
-        #        message=(
-        #            "Ошибка ввода, используйте формат: 'www.example.com'"
-        #        )
-        #    )
-        # ],
     )
     job = models.ManyToManyField(
         Job,
+        blank=True,
         through='AutoserviceJob',
         verbose_name='Работы',
         help_text='Выберите необходимый тип работ',
     )
     car_service = models.ManyToManyField(
         Transport,
+        blank=True,
         related_name='autoservices',
         verbose_name='Автомобильные бренды',
         help_text='Выберите автомобильные бренды'
@@ -274,7 +373,7 @@ class AutoService(models.Model):
 
 class AutoserviceJob(models.Model):
     """
-    Модель для связи модели автосервиса и модели работы
+    Модель для связи модели автосервиса и модели работы.
     """
     service = models.ForeignKey(
         AutoService,
@@ -290,6 +389,8 @@ class AutoserviceJob(models.Model):
     )
     price = models.FloatField(
         verbose_name='Стоимость работ',
+        blank=True,
+        null=True,
         validators=[
             MinValueValidator(1, message='Стоимость ниже 1 невозможна'),
         ],
@@ -301,25 +402,34 @@ class AutoserviceJob(models.Model):
     class Meta:
         verbose_name = "работу"
         verbose_name_plural = "Работы и прайсы автосервисов"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['service', 'job'], name='unique_service_job'
+            )
+        ]
 
 
 class Feedback(models.Model):
     """
-    Модель отзыва пользователя на автосервис
+    Класс Feedback представляет модель отзыва на автосервис,
+    который может быть оставлен пользователем.
     """
-    # author = models.ForeignKey(
-    #     User,
-    #     on_delete=models.CASCADE,
-    #     related_name='feedbacks',
-    #     verbose_name='Автор отзыва',
-    # )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='feedback',
+        verbose_name='Автор отзыва',
+    )
     autoservice = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
         related_name='feedback',
-        verbose_name='Автосервис'
+        verbose_name='Автосервис, на который пользователь пишет отзыв'
     )
-    text = models.TextField(verbose_name='Текст отзыва')
+    text = models.TextField(
+        verbose_name='Текст отзыва',
+        help_text='Напишите ваш отзыв тут'
+    )
     score = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message='Оценка ниже 1 невозможна'),
@@ -336,11 +446,11 @@ class Feedback(models.Model):
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=['author', 'autoservice'], name='unique_feedback'
-        #     )
-        # ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'autoservice'], name='unique_feedback'
+            )
+        ]
 
     def __str__(self) -> str:
         return f'{self.text[:25]}'

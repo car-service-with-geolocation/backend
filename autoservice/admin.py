@@ -1,8 +1,18 @@
 from django.contrib import admin
 
-from autoservice.models import (AutoService, AutoserviceJob, City, Company,
-                                Feedback, GeolocationAutoService,
-                                GeolocationCity, Job)
+from autoservice.models import (
+    AutoService,
+    AutoserviceJob,
+    City,
+    Company,
+    Feedback,
+    GeolocationAutoService,
+    GeolocationCity,
+    Job,
+    Transport,
+    WorkingTime,
+    WorkTimeRange,
+)
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -49,6 +59,15 @@ class GeolocationCityAdmin(admin.ModelAdmin):
     )
 
 
+class TransportAdmin(admin.ModelAdmin):
+    list_display = ('id',
+                    'brand',
+                    'model'
+                    )
+    list_filter = ('brand', )
+    search_fields = ('brand', )
+
+
 class AutoServiceAdmin(admin.ModelAdmin):
     """
     Кастомизация модели AutoService в админ панеле.
@@ -69,6 +88,9 @@ admin.site.register(Company, CompanyAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(Feedback)
 admin.site.register(Job)
+admin.site.register(Transport)
+admin.site.register(WorkTimeRange)
+admin.site.register(WorkingTime)
 admin.site.register(
     GeolocationAutoService,
     GeolocationAutoServiceAdmin

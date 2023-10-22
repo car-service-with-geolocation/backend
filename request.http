@@ -1,10 +1,17 @@
 @service = http://127.0.0.1:8000/api/v1/autoservice/service/
-@service_id = http://127.0.0.1:8000/api/v1/autoservice/service/2/
+@company = http://127.0.0.1:8000/api/v1/autoservice/company/
+@service_id = http://127.0.0.1:8000/api/v1/autoservice/service/1/
 @filter_service = http://127.0.0.1:8000/api/v1/autoservice/service/?latitude=60&longitude=60
-@add_feedback = http://127.0.0.1:8000/api/v1/autoservice/service/2/feedback/
+@feedback = http://127.0.0.1:8000/api/v1/autoservice/service/1/feedback/
+@feedback_id = http://127.0.0.1:8000/api/v1/autoservice/service/1/feedback/1/
+@get_user_token = http://127.0.0.1:8000/api/v1/auth/jwt/create/
 
 ###
 GET {{ service }} HTTP/1.1
+content-type: application/json
+
+###
+GET {{ company }} HTTP/1.1
 content-type: application/json
 
 ###
@@ -16,10 +23,37 @@ GET {{ filter_service }} HTTP/1.1
 content-type: application/json
 
 ###
-POST {{ add_feedback }} HTTP/1.1
+GET {{ feedback }} HTTP/1.1
+content-type: application/json
+
+###
+GET {{ feedback_id }} HTTP/1.1
+content-type: application/json
+
+###
+POST {{ get_user_token }} HTTP/1.1
 content-type: application/json
 
 {
-    "text": "Хрнеь какая то",
-    "score": 1
+    "username": "ap",
+    "password": "qwe123"
+}
+
+###
+POST {{ get_user_token }} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "apap",
+    "password": "qweqwe"
+}
+
+###
+POST {{ feedback }} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk2NDg2MTMxLCJqdGkiOiI3MzEyNTFmMTAxZWU0MmNiYWUxMjI3MWU2NGI5ODc4ZiIsInVzZXJfaWQiOjJ9.BCHCgZ9GegEqiRnMkDhEQYuxTZ2p2tvmA4EKzv0Ubms
+
+{
+    "text": "Все круто, мастер в прямом смысле облизывал машину, немного странно но прикольно",
+    "score": 5
 }

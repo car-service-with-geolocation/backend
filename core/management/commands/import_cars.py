@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from cars.models import Transport
+from autoservice.models import Transport
 
 
 def process_file(name: str): 

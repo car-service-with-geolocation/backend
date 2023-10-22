@@ -1,10 +1,24 @@
 from django.shortcuts import get_object_or_404
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from api.v1.cars.serializers import TransportsSerializer
-from autoservice.models import (AutoService, AutoserviceJob, City, Company,
-                                Feedback, GeolocationAutoService)
+from autoservice.models import (
+    AutoService,
+    AutoserviceJob,
+    City,
+    Company,
+    Feedback,
+    GeolocationAutoService,
+    Transport,
+    WorkTimeRange,
+    WorkingTime,
+)
+
+
+class TransportsSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка брендов/моделей автомобилей"""
+    class Meta:
+        model = Transport
+        fields = ('id', 'brand', 'slug')
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -47,6 +61,39 @@ class AutoserviceJobSerializer(serializers.ModelSerializer):
         ]
 
 
+class WorkTimeRangeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WorkTimeRange
+        fields = [
+            'openfrom',
+            'openuntil',
+        ]
+
+
+class WorkTimeSerializer(serializers.ModelSerializer):
+
+    monday = WorkTimeRangeSerializer()
+    tuesday = WorkTimeRangeSerializer()
+    wednesday = WorkTimeRangeSerializer()
+    thursday = WorkTimeRangeSerializer()
+    friday = WorkTimeRangeSerializer()
+    saturday = WorkTimeRangeSerializer()
+    sunday = WorkTimeRangeSerializer()
+
+    class Meta:
+        model = WorkingTime
+        fields = [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ]
+
+
 class AutoServiceSerializer(serializers.ModelSerializer):
     """
     Сериализатор для списка автосервисов.
@@ -58,10 +105,11 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         queryset=City.objects.all()
     )
     car_service = TransportsSerializer(many=True)
+    working_time = WorkTimeSerializer()
     job = serializers.SerializerMethodField()
 
-    # rating = serializers.FloatField(read_only=True)
-    # votes = serializers.IntegerField(read_only=True)
+    rating = serializers.FloatField(read_only=True)
+    votes = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = AutoService
@@ -73,9 +121,8 @@ class AutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'openfrom',
-            'openuntil',
-            'holidays',
+            'working_time_text',
+            'working_time',
             'phone_number',
             'email',
             'site',
@@ -92,11 +139,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Feedback.
     """
-    # author = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='username',
-    #     default=serializers.CurrentUserDefault()
-    # )
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
 
     def validate(self, data):
         if self.context['request'].method != 'POST':
@@ -117,7 +164,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         model = Feedback
         fields = (
             'id',
-            # 'author',
+            'author',
             'text',
             'score',
             'pub_date',

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -6,7 +7,6 @@ load_dotenv()
 
 
 # COMMON SETTINGS
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'qwe123')
@@ -24,16 +24,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
     'djoser',
     'django_filters',
     'corsheaders',
-    'colorfield',
     'api.apps.ApiConfig',
     'autoservice.apps.AutoserviceConfig',
-    'cars.apps.CarsConfig',
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [
@@ -98,30 +98,32 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }
 
-SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('Bearer',),
-}
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+#     'AUTH_HEADER_TYPES': ('Bearer',),
+# }
 
 DJOSER = {
     "SERIALIZERS": {
         'user': 'api.v1.users.serializers.CustomUserSerializer',
         'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+        'user_create': 'api.v1.users.serializers.CustomUserSerializer',
+        'user_create_password_retype': 'api.v1.users.serializers.CustomUserSerializer'
     },
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
-        'user_list': ['rest_framework.permissions.IsAdminUser'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.IsAdmin'],
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'TOKEN_MODEL': None,
-    'ACTIVATION_URL': 'v1/auth/users/activation/{uid}/{token}/',
+    'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
 }
 
 
@@ -141,6 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
+AUTHENTICATION_BACKENDS = ('users.backends.AuthBackend', )
 ADMIN_MODEL_EMPTY_VALUE = '-пусто-'
 
 
@@ -151,10 +154,10 @@ else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.yandex.ru'
     EMAIL_PORT = 465
-    EMAIL_HOST_USER = 'todo'
-    EMAIL_HOST_PASSWORD = 'todo'
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER'),
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD'),
     EMAIL_USE_SSL = True
-    DEFAULT_FROM_EMAIL = 'some_service_email'
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # Internationalization settings
@@ -175,6 +178,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+DEFAULT_MAXLEN_CHARFIELD = 250
 
 # Constants settings cars.apps
 MAX_LENGTH_TRANSPORT_SLUG = 150
@@ -196,13 +200,7 @@ PHONE_MAX_LENGTH = 12
 FIRST_NAME_MAX_LENGTH = 40
 LAST_NAME_MAX_LENGTH = 40
 
-# Constants autoservice.apps
-DAY_CHOICES = (
-    ('1', 'Понедельник'),
-    ('2', 'Вторник'),
-    ('3', 'Среда'),
-    ('4', 'Четверг'),
-    ('5', 'Пятница'),
-    ('6', 'Суббота'),
-    ('7', 'Воскресенье'),
-)
+# Constants order.apps
+MAX_LENGTH_INFO = 200
+MAX_LENGTH_TASK = 200
+MAX_LENGTH_CAR = 50

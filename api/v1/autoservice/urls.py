@@ -1,9 +1,8 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from . import views
+from .views import TransportDetail, TransportList
 
 router = SimpleRouter()
 router.register(
@@ -16,16 +15,17 @@ router.register(
     views.AutoServiceViewSet,
     basename='service'
 )
-# router.register(
-#     r'service/(?P<autoservice_id>\d+)/feedback',
-#     views.FeedbackViewSet,
-#     basename='feedback'
-# )
+router.register(
+    r'service/(?P<autoservice_id>\d+)/feedback',
+    views.FeedbackViewSet,
+    basename='feedback'
+)
 
 urlpatterns = [
+    path('car_models', TransportList.as_view(), name='transport-list'),
+    path('car_models/<int:pk>/',
+         TransportDetail.as_view(),
+         name='transport-detail'
+         ),
     path('', include(router.urls)),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)

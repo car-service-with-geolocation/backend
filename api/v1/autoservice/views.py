@@ -1,14 +1,49 @@
-from django.db.models import F
-from django.db.models.functions import ASin, Cos, Power, Radians, Sin, Sqrt
+from django.db.models import F, Avg, Count
+from django.db.models.functions import (
+    ASin,
+    Cos,
+    Power,
+    Radians,
+    Sin,
+    Sqrt
+)
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import mixins, viewsets
+from rest_framework import filters, generics, mixins, viewsets
 from rest_framework.permissions import AllowAny
 
-from autoservice.models import AutoService, Company
+from autoservice.models import AutoService, Company, Transport
 from core.utils import is_float
 
-from .serializers import (AutoServiceSerializer, CompanySerializer,
-                          FeedbackSerializer)
+from .filters import TransportsFilter
+from .serializers import (
+    AutoServiceSerializer,
+    CompanySerializer,
+    FeedbackSerializer,
+    TransportsSerializer
+)
+from .permissions import IsAuthorOrAdminReadOnly
+
+
+class TransportList(generics.ListAPIView):
+    """
+    Вьюсет для чтения информации о компаниях по ремонту авто.
+    """
+
+    queryset = Transport.objects.all()
+    serializer_class = TransportsSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_class = TransportsFilter
+    search_fields = ('brand', )
+
+
+class TransportDetail(generics.RetrieveAPIView):
+    """
+    Вьюсет для чтения информации о компаниях по ремонту авто.
+    """
+
+    queryset = Transport.objects.all()
+    serializer_class = TransportsSerializer
 
 
 class CompanyViewset(viewsets.ReadOnlyModelViewSet):
@@ -40,15 +75,16 @@ class AutoServiceViewSet(
         return {'request': None}
 
     def get_queryset(self):
-        queryset = AutoService.objects.select_related(
-            "geolocation"
-        ).order_by('-rating')
-        # queryset = AutoService.objects.select_related(
-        #     "geolocation"
-        #     ).annotate(
-        #        newrating=Avg('feedback__score'),
-        #        newvotes=Count('feedback__score')
-        # ).order_by('-rating')
+        queryset = (
+            AutoService
+            .objects
+            .select_related("geolocation")
+            .annotate(
+                rating=Avg('feedback__score'),
+                votes=Count('feedback__score')
+            )
+            .order_by('-rating')
+        )
         if (
             'latitude' in self.request.query_params
             and 'longitude' in self.request.query_params
@@ -77,10 +113,11 @@ class AutoServiceViewSet(
 
 class FeedbackViewSet(viewsets.ModelViewSet):
     """
-    ViewSet для модели отзывов Feedback
+    ViewSet для модели отзывов Feedback.
     """
-
     serializer_class = FeedbackSerializer
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    permission_classes = [IsAuthorOrAdminReadOnly]
 
     def get_autoservice(self):
         return get_object_or_404(
@@ -89,7 +126,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         )
 
     def get_queryset(self):
-        return self.get_autoservice().feedbacks.all()
+        return self.get_autoservice().feedback.all()
 
     def perform_create(self, serializer):
         serializer.save(

@@ -59,8 +59,8 @@ jobs:
           sudo docker compose -f docker-compose.production.yml up -d
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py makemigrations
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-          # sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_city
-          # sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_autoservice
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_city
+          sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_autoservice
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
           sudo docker compose -f docker-compose.production.yml exec gateway chown -R root /app/media/
           sudo docker compose -f docker-compose.production.yml exec backend chown -R root /app/media/

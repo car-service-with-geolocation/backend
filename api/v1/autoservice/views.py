@@ -20,6 +20,7 @@ from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
     FeedbackSerializer,
+    ListAutoServiceSerializer,
     TransportsSerializer
 )
 from .permissions import IsAuthorOrAdminReadOnly
@@ -70,6 +71,11 @@ class AutoServiceViewSet(
 
     serializer_class = AutoServiceSerializer
     permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        if self.action in 'list':
+            return ListAutoServiceSerializer
+        return AutoServiceSerializer
 
     def get_serializer_context(self):
         return {'request': None}

@@ -18,7 +18,7 @@ class TransportsSerializer(serializers.ModelSerializer):
     """Сериализатор для списка брендов/моделей автомобилей"""
     class Meta:
         model = Transport
-        fields = ('id', 'brand', 'slug')
+        fields = ('id', 'brand')
 
 
 class CompanySerializer(serializers.ModelSerializer):

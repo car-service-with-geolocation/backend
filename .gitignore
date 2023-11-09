@@ -138,3 +138,4 @@ db.sqlite3.bak
 !/migrations/__init__.py
 
 #Static_files
+media/autoservice/images/logo/*

@@ -260,11 +260,6 @@ class Job(models.Model):
         verbose_name='Название работы',
         unique=True,
     )
-    description = models.CharField(
-        null=True,
-        max_length=settings.MAX_LENGTH_JOBS_DESCRIPTION,
-        verbose_name='Описание работы'
-    )
 
     class Meta:
         ordering = ('title',)

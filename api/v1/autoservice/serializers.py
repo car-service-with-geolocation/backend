@@ -8,6 +8,7 @@ from autoservice.models import (
     Company,
     Feedback,
     GeolocationAutoService,
+    Job,
     Transport,
     WorkTimeRange,
     WorkingTime,
@@ -169,3 +170,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
             'score',
             'pub_date',
         )
+
+
+class JobsSerializer(serializers.ModelSerializer):
+    """Сериализатор для работ автосервиса"""
+
+    class Meta:
+        model = Job
+        fields = "__all__"

@@ -21,7 +21,7 @@ class AuthBackend(object):
 
         try:
             user = CustomUser.objects.get(
-                Q(username=username) |
+                #Q(username=username) |
                 Q(email=username) |
                 Q(phone_number=username)
             )

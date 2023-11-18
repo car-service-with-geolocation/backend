@@ -11,9 +11,12 @@ from autoservice.models import (AutoService, AutoserviceJob, City, Company,
 
 
 def process_file(name: str):
-    with open(os.path.join(settings.BASE_DIR, 'static/data/', name
-                           ), 'r', encoding='utf-8') as f:
-        return json.load(f)
+    with open(
+        os.path.join(settings.BASE_DIR, 'static/data/', name),
+        'r',
+        encoding='utf-8'
+    ) as file:
+        return json.load(file)
 
 
 class Command(BaseCommand):
@@ -22,6 +25,7 @@ class Command(BaseCommand):
         data = process_file('avtoservice.json')
         count = 1
         for name_avtoservice, value in data.items():
+            print(f'----{count}-----{name_avtoservice}-------пробую загрузить')
 
             #  Создаем Company.
             if len(value[5]) > 0:
@@ -39,7 +43,7 @@ class Command(BaseCommand):
             )
             if created and value[8]:
                 with open(
-                    f'media/autoservice/images/logo/{name_avtoservice}.jpg',
+                    f'static/data/logo_autoservice/{name_avtoservice}.jpg',
                         'rb') as file:
                     image = ImageFile(file)
                     company.logo.save(f'{name_avtoservice}.jpg', image)
@@ -172,37 +176,11 @@ class Command(BaseCommand):
 
             #  Создаем Transport.
             for item in value[7]:
-                brand = item
-                latin_cyrillic_dict = {
-                    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
-                    'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
-                    'й': 'i', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
-                    'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
-                    'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'cz',
-                    'ш': 'sh', 'щ': 'scz', 'ъ': '', 'ы': 'y', 'ь': '',
-                    'э': 'e', 'ю': 'u', 'я': 'ja', 'А': 'A', 'Б': 'B',
-                    'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E',
-                    'Ж': 'ZH', 'З': 'Z', 'И': 'I', 'Й': 'I', 'К': 'K',
-                    'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P',
-                    'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'H',
-                    'Ц': 'C', 'Ч': 'CZ', 'Ш': 'SH', 'Щ': 'SCH', 'Ъ': '',
-                    'Ы': 'y', 'Ь': '', 'Э': 'E', 'Ю': 'U', 'Я': 'YA', ',': '',
-                    '?': '', ' ': '', '~': '', '!': '', '@': '', '#': '',
-                    '$': '', '%': '', '^': '', '&': '', '*': '', '(': '',
-                    ')': '', '-': '', '=': '', '+': '', ':': '', ';': '',
-                    '<': '', '>': '', '\'': '', '"': '', '\\': '', '/': '',
-                    '№': '', '[': '', ']': '', '{': '', '}': '', 'ґ': '',
-                    'ї': '', 'є': '', 'Ґ': 'g', 'Ї': 'i', 'Є': 'e', '—': '',
-                    'Š': 's', 'š': 's'
-                }
-                for key in latin_cyrillic_dict:
-                    item = item.replace(
-                        key, latin_cyrillic_dict[key]).lower()
                 transport, created = Transport.objects.get_or_create(
-                    brand=brand.strip(),
-                    slug=item
+                    brand=item.strip()
                 )
                 transport.autoservices.add(avtoservice)
-            print(f'-------{count}--------{name_avtoservice}--------------OK')
+            print(f'----{count}-----{name_avtoservice}-------загружено')
             count += 1
+        print()
         print('ЗАГРУЗКА АВТОСЕРВИСОВ ЗАВЕРШЕНА!')

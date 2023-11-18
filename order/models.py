@@ -6,6 +6,7 @@ from autoservice.models import Job
 
 User = get_user_model()
 
+
 class Order(models.Model):
     """Модель заявки для авторизованного пользователя"""
     owner = models.ForeignKey(
@@ -27,19 +28,23 @@ class Order(models.Model):
     )
     jobs = models.ManyToManyField(
         Job,
-        related_name='orders', 
-        verbose_name='Работы' 
+        related_name='orders',
+        verbose_name='Работы'
     )
     image = models.ImageField(
         'Фото поломки',
         upload_to='order/images/',
         null=True,
     )
+    pub_date = models.DateTimeField(
+        'Дата публикации отзыва',
+        auto_now_add=True,
+    )
 
-class Meta: 
-        ordering = ('-pub_date', ) 
-        verbose_name = 'Заявка' 
-        verbose_name_plural = 'Заявки' 
- 
-def __str__(self): 
-    return f'{self.owner} - {self.car},{self.task}'
+    class Meta:
+        ordering = ('-pub_date', )
+        verbose_name = 'Заявка'
+        verbose_name_plural = 'Заявки'
+
+    def __str__(self):
+        return f'{self.owner} - {self.car},{self.task}'

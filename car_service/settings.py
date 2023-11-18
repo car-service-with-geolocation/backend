@@ -123,6 +123,7 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
+    "ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL": "find-car-service.ru",
 }
 
 
@@ -157,6 +158,8 @@ else:
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
     EMAIL_USE_SSL = True
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    SERVER_EMAIL = EMAIL_HOST_USER
+    EMAIL_ADMIN = EMAIL_HOST_USER
 
 
 # Internationalization settings

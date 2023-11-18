@@ -8,9 +8,8 @@ from users.models import CustomUser
 class CustomUserAdmin(UserAdmin):
     change_user_password_template = None
     fieldsets = (
-        (None, {'fields': ('phone_number', 'email', 'username')}),
         (_('Личная информация'),
-         {'fields': ('first_name', 'last_name',)}),
+         {'fields': ('email', 'phone_number', 'first_name')}),
         (_('Permissions'), {
             'fields': (
                 'is_active',
@@ -25,12 +24,12 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'phone_number', 'password1', 'password2',),
+            'fields': ('email', 'phone_number', 'first_name', 'password1', 'password2',),
         }),
     )
-    list_display = ('id', 'username', 'email', 'phone_number', )
+    list_display = ('id', 'email', 'phone_number', 'first_name')
 
-    list_display_links = ('id', 'username',)
+    list_display_links = ('id', 'email',)
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('first_name', 'last_name', 'id', 'email', 'phone_number',)
     ordering = ('-id',)

@@ -21,10 +21,6 @@ class Transport(models.Model):
         max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
         verbose_name='Название бренда'
     )
-    slug = models.CharField(
-        max_length=settings.MAX_LENGTH_TRANSPORT_SLUG,
-        verbose_name='Уникальный Slug'
-    )
 
     class Meta:
         ordering = ('brand', )
@@ -263,11 +259,6 @@ class Job(models.Model):
         max_length=settings.MAX_LENGTH_JOBS_NAME,
         verbose_name='Название работы',
         unique=True,
-    )
-    description = models.CharField(
-        null=True,
-        max_length=settings.MAX_LENGTH_JOBS_DESCRIPTION,
-        verbose_name='Описание работы'
     )
 
     class Meta:

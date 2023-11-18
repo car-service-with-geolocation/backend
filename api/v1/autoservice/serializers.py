@@ -196,7 +196,6 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
 class JobsSerializer(serializers.ModelSerializer):
     """Сериализатор для работ автосервиса"""
-
     class Meta:
         model = Job
         fields = "__all__"

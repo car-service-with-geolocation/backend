@@ -15,6 +15,8 @@ djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
 drf-extra-fields==3.4.1
 drf-yasg==1.21.5
+drf-spectacular==0.26.5
+drf-spectacular[sidecar]
 geoip2==2.9.0
 gunicorn==20.1.0
 idna==3.4

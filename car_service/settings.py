@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'autoservice.apps.AutoserviceConfig',
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
-    'order.apps.OrderConfig',
+    'order.apps.OrderConfig'
 ]
 
 MIDDLEWARE = [

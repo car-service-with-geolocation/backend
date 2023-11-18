@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 # COMMON SETTINGS
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -97,10 +96,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    #'UPLOADED_FILES_USE_URL': False
 }
 
 # SIMPLE_JWT = {
@@ -117,13 +116,14 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.IsAuthenticated'],
-        'user_list': ['rest_framework.permissions.IsAdmin'],
+        'user_list': ['rest_framework.permissions.IsAuthenticated'],
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
+    "ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL": "find-car-service.ru",
 }
 
 

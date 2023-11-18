@@ -95,9 +95,31 @@ class WorkTimeSerializer(serializers.ModelSerializer):
         ]
 
 
-class AutoServiceSerializer(serializers.ModelSerializer):
+class ListAutoServiceSerializer(serializers.ModelSerializer):
     """
     Сериализатор для списка автосервисов.
+    """
+    company = CompanySerializer()
+    geolocation = GeolocationAutoServiceSerializer()
+    rating = serializers.FloatField(read_only=True)
+    votes = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = AutoService
+        fields = [
+            'id',
+            'company',
+            'geolocation',
+            'address',
+            'rating',
+            'votes',
+            'working_time',
+        ]
+
+
+class AutoServiceSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор автосервиса.
     """
     company = CompanySerializer()
     geolocation = GeolocationAutoServiceSerializer()

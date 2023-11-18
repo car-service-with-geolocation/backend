@@ -12,36 +12,30 @@ class CustomUserManager(BaseUserManager):
 
     def _create_user(
             self,
-            username=None,
             email=None,
-            phone_number=None,
+            first_name=None,
             password=None,
             **extra_fields
             ):
         """
         Создает и сохраняет пользователя в зависимости от варианта регистрации
         """
-        if not (email or phone_number):
+        if not email:
             raise ParseError(
-                'Поле телефон или электронная почта должно быть заполнено'
+                'Поле электронная почта должно быть заполнено'
                 )
-        if email:
-            email = self.normalize_email(email)
+        if not first_name:
+            raise ParseError(
+                'Поле Имя должно быть заполнено'
+            )
 
-        if not username:
-            if email:
-                username = email.split('@')[0]
-            else:
-                username = phone_number
+        email = self.normalize_email(email)
 
         user = self.model(
-            username=username,
+            email=email,
+            first_name=first_name,
             **extra_fields
         )
-        if email:
-            user.email = email
-        if phone_number:
-            user.phone = phone_number
 
         user.set_password(password)
         user.save(using=self._db)
@@ -49,9 +43,8 @@ class CustomUserManager(BaseUserManager):
 
     def create_user(
             self,
-            username=None,
             email=None,
-            phone_number=None,
+            first_name=None,
             password=None,
             **extra_fields
             ):
@@ -60,18 +53,16 @@ class CustomUserManager(BaseUserManager):
         """
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(
-            phone_number=phone_number,
-            username=username,
             email=email,
+            first_name=first_name,
             password=password,
             **extra_fields
         )
 
     def create_superuser(
             self,
-            username=None,
             email=None,
-            phone_number=None,
+            first_name=None,
             password=None,
             **extra_fields
             ):
@@ -87,13 +78,9 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        if not email:
-            email = username + '@admin.ru'
-
         return self._create_user(
-            phone_number=phone_number,
-            username=username,
             email=email,
+            first_name=first_name,
             password=password,
             **extra_fields
         )
@@ -101,47 +88,24 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name']
 
-    username = models.CharField(
-        verbose_name='Имя пользователя',
-        max_length=settings.USERNAME_MAX_LENGTH,
-        unique=True,
-        null=True,
-        blank=True,
-        help_text=(
-            'Введите уникальное имя пользователя. Максимум 40 символов.'
-            'Используйте только английские буквы, цифры и символы @/./+/-/_'
-        ),
-        validators=[ASCIIUsernameValidator()],
-        error_messages={
-            'unique': 'Пользователь с таким именем уже существует',
-        },
-    )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=settings.EMAIL_MAX_LENGTH,
         unique=True,
-        null=True,
-        blank=True,
+        null=False,
         help_text='Введите адрес электронной почты',
         validators=[ASCIIUsernameValidator()],
         error_messages={
             'unique': 'Пользователь с такой почтой уже существует',
         },
     )
-    last_name = models.CharField(
-        verbose_name='Фамилия',
-        null=True,
-        blank=True,
-        max_length=settings.LAST_NAME_MAX_LENGTH,
-        help_text='Введите фамилию'
-    )
 
     first_name = models.CharField(
         verbose_name='Имя',
-        null=True,
-        blank=True,
+        null=False,
         max_length=settings.FIRST_NAME_MAX_LENGTH,
         help_text='Введите имя'
     )
@@ -164,13 +128,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         auto_now_add=True
     )
 
-    image = models.ImageField(
-        blank=True,
-        null=True,
-        verbose_name='Картинка',
-        upload_to='users/images/',
-        help_text='Выберите картинку профиля',
-    )
     is_staff = models.BooleanField(
         verbose_name='Категория пользователя',
         default=False
@@ -194,4 +151,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.get_username()
+        return str(self.email)

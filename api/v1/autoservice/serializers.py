@@ -112,7 +112,7 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'working_time_text',
+            'working_time',
         ]
 
 

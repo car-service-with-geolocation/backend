@@ -123,6 +123,7 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}/',
+    "ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL": "find-car-service.ru",
 }
 
 

@@ -36,18 +36,6 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
     activation = extend_schema(tags = ["Пользователь"],
                           description = "Активация пользователя по uid и token",
                           summary = "Активация пользователя"),
-    # login=extend_schema(
-    #     tags=["Пользователь"],
-    #     methods=["POST"],
-    #     description="Запрос на получение токена доступа",
-    #     summary="Запрос на получение токена доступа"
-    # ),
-    # logout=extend_schema(
-    #     tags=["Пользователь"],
-    #     methods=["POST"],
-    #     description="Запрос на аннулирование токена доступа",
-    #     summary="Запрос на аннулирование токена доступа"
-    # ),
     me = [
         extend_schema(
             tags = ["Пользователь"],

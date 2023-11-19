@@ -3,12 +3,16 @@ from rest_framework.response import Response
 
 from core.utils import get_geoip_from_request
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
+@extend_schema(
+    tags = ["Геолокация"],
+    methods = ["GET"],
+)
+@extend_schema_view(
+    get=extend_schema(description="Получить текущую геолокацию клиента по IP из запроса", summary = "Получить IP")
+)
 class MyGeoIPApiView(views.APIView):
-    """
-    ApiView для получения текущей геолокации клиента.
-    Геолокация берется по IP из request.
-    """
     def get(self, request):
         geoip = get_geoip_from_request(request)
         if geoip is None:

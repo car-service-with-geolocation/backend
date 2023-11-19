@@ -108,9 +108,9 @@ REST_FRAMEWORK = {
 # Для использования drf_spectacular (документации)
 SPECTACULAR_SETTINGS = {
     #настройки для хоста закомментированы
-    # 'TITLE': 'Your Project API',
-    # 'DESCRIPTION': 'Your project description',
-    # 'VERSION': '1.0.0',
+    'TITLE': 'Find Car Service API',
+    'DESCRIPTION': 'Документация для веб приложения find-car-service.ru',
+    'VERSION': '1.0.0',
     'SWAGGER_UI_DIST': 'SIDECAR',
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',

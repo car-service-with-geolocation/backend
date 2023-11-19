@@ -15,13 +15,14 @@ from rest_framework.permissions import AllowAny
 from autoservice.models import AutoService, Company, Job, Transport
 from core.utils import is_float
 
-from .filters import JobsFilter, TransportsFilter
+from .filters import TransportsFilter, JobsFilter
 from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
     FeedbackSerializer,
     ListAutoServiceSerializer,
-    TransportsSerializer
+    TransportsSerializer,
+    JobsSerializer
 )
 from .permissions import IsAuthorOrAdminReadOnly
 

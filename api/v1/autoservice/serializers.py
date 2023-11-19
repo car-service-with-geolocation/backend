@@ -103,6 +103,7 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
     geolocation = GeolocationAutoServiceSerializer()
     rating = serializers.FloatField(read_only=True)
     votes = serializers.IntegerField(read_only=True)
+    working_time = WorkTimeSerializer()
 
     class Meta:
         model = AutoService
@@ -196,7 +197,6 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
 class JobsSerializer(serializers.ModelSerializer):
     """Сериализатор для работ автосервиса"""
-
     class Meta:
         model = Job
         fields = "__all__"

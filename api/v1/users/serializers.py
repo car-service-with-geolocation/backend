@@ -18,13 +18,10 @@ class CustomUserSerializer(UserSerializer):
         model = CustomUser
         fields = ('id',
                   'email',
-                  'username',
-                  'password',
-                  'last_name',
                   'first_name',
+                  'password',
                   'phone_number',
-                  'date_joined',
-                  'image'
+                  'date_joined'
                   )
 
     def create(self, validated_data):

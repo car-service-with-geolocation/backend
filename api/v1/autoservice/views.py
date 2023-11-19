@@ -12,16 +12,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, mixins, viewsets
 from rest_framework.permissions import AllowAny
 
-from autoservice.models import AutoService, Company, Transport
+from autoservice.models import AutoService, Company, Job, Transport
 from core.utils import is_float
 
-from .filters import TransportsFilter
+from .filters import TransportsFilter, JobsFilter
 from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
     FeedbackSerializer,
     ListAutoServiceSerializer,
-    TransportsSerializer
+    TransportsSerializer,
+    JobsSerializer
 )
 from .permissions import IsAuthorOrAdminReadOnly
 
@@ -211,3 +212,16 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             autoservice=self.get_autoservice()
         )
+
+
+class JobsList(generics.ListAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobsSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_class = JobsFilter
+    search_fields = ('name', )
+
+
+class JobsDetail(generics.RetrieveAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobsSerializer

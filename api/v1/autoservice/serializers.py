@@ -8,6 +8,7 @@ from autoservice.models import (
     Company,
     Feedback,
     GeolocationAutoService,
+    Job,
     Transport,
     WorkTimeRange,
     WorkingTime,
@@ -18,7 +19,7 @@ class TransportsSerializer(serializers.ModelSerializer):
     """Сериализатор для списка брендов/моделей автомобилей"""
     class Meta:
         model = Transport
-        fields = ('id', 'brand', 'slug')
+        fields = ('id', 'brand')
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -102,6 +103,7 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
     geolocation = GeolocationAutoServiceSerializer()
     rating = serializers.FloatField(read_only=True)
     votes = serializers.IntegerField(read_only=True)
+    working_time = WorkTimeSerializer()
 
     class Meta:
         model = AutoService
@@ -112,7 +114,7 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'working_time_text',
+            'working_time',
         ]
 
 
@@ -191,3 +193,10 @@ class FeedbackSerializer(serializers.ModelSerializer):
             'score',
             'pub_date',
         )
+
+
+class JobsSerializer(serializers.ModelSerializer):
+    """Сериализатор для работ автосервиса"""
+    class Meta:
+        model = Job
+        fields = "__all__"

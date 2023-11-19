@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from . import views
-from .views import TransportDetail, TransportList
+from .views import TransportDetail, TransportList, JobsList, JobsDetail
 
 router = SimpleRouter()
 router.register(
@@ -27,5 +27,7 @@ urlpatterns = [
          TransportDetail.as_view(),
          name='transport-detail'
          ),
+    path('', JobsList.as_view(), name='jobs-list'),
+    path('<int:pk>/', JobsDetail.as_view(), name='jobs-detail'),
     path('', include(router.urls)),
 ]

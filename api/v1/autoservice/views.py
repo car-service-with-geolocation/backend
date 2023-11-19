@@ -222,6 +222,27 @@ class JobsList(generics.ListAPIView):
     search_fields = ('name', )
 
 
+@extend_schema(
+    tags = ["Работы"],
+    methods = ["GET"],
+)
+@extend_schema_view(
+    get=extend_schema(description = "Получить список всех работ", summary = "Получить все данные")
+)
+class JobsList(generics.ListAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobsSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_class = JobsFilter
+    search_fields = ('name', )
+
+@extend_schema(
+    tags=["Работы"],
+    methods=["GET"],
+)
+@extend_schema_view(
+    get=extend_schema(description = "Получить подробную информацию о конкретной работе", summary = "Получить данные по id")
+)
 class JobsDetail(generics.RetrieveAPIView):
     queryset = Job.objects.all()
     serializer_class = JobsSerializer

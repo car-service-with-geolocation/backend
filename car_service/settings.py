@@ -16,6 +16,8 @@ DEVELOPMENT = os.getenv('DEVELOPMENT') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 WSGI_APPLICATION = 'car_service.wsgi.application'
 INSTALLED_APPS = [
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,7 +101,20 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    # Для использования drf_spectacular (документации)
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     #'UPLOADED_FILES_USE_URL': False
+}
+# Для использования drf_spectacular (документации)
+SPECTACULAR_SETTINGS = {
+    #настройки для хоста закомментированы
+    # 'TITLE': 'Your Project API',
+    # 'DESCRIPTION': 'Your project description',
+    # 'VERSION': '1.0.0',
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+
 }
 
 # SIMPLE_JWT = {

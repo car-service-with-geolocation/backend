@@ -445,3 +445,9 @@ class Feedback(models.Model):
 
     def __str__(self) -> str:
         return f'{self.text[:25]}'
+
+class Image(models.Model):
+    # Путь, куда будут загружаться изображения
+    image = models.ImageField(upload_to='feedback/images/')
+    # Связь с моделью Feedback
+    feedbacks = models.ManyToManyField(Feedback, related_name='images')

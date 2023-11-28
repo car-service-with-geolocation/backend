@@ -11,7 +11,7 @@ from autoservice.models import (
     Job,
     Transport,
     WorkTimeRange,
-    WorkingTime,
+    WorkingTime, Image,
 )
 
 
@@ -158,14 +158,21 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         job = AutoserviceJob.objects.filter(service=obj)
         return AutoserviceJobSerializer(job, many=True).data
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ['id', 'image']
 
 class FeedbackSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Feedback.
     """
+    # поле для изображений
+    images = ImageSerializer(many=True, read_only=True)
+
     author = serializers.SlugRelatedField(
         read_only=True,
-        slug_field='username',
+        slug_field='email',
         default=serializers.CurrentUserDefault()
     )
 
@@ -192,6 +199,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
             'text',
             'score',
             'pub_date',
+            'images',
         )
 
 

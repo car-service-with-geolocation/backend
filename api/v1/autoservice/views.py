@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, mixins, viewsets
 from rest_framework.permissions import AllowAny
 
-from autoservice.models import AutoService, Company, Job, Transport
+from autoservice.models import AutoService, Company, Job, Transport, Image
 from core.utils import is_float
 
 from .filters import TransportsFilter, JobsFilter
@@ -208,10 +208,14 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         return self.get_autoservice().feedback.all()
 
     def perform_create(self, serializer):
-        serializer.save(
+        feedback = serializer.save(
             author=self.request.user,
             autoservice=self.get_autoservice()
         )
+
+        for file in self.request.FILES.getlist('images'):
+            image = Image.objects.create(image=file)
+            feedback.images.add(image)
 
 
 class JobsList(generics.ListAPIView):

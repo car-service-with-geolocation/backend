@@ -168,7 +168,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
     Сериализатор для модели Feedback.
     """
     # поле для изображений
-    images = ImageSerializer(many=True,) #read_only=True)
+    images = ImageSerializer(many=True,required=False,help_text='Загрузите изображение (необязательно)')#read_only=True)
 
 
     author = serializers.SlugRelatedField(

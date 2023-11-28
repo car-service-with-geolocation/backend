@@ -10,7 +10,7 @@ from django.db.models.functions import (
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, mixins, viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from autoservice.models import AutoService, Company, Job, Transport, Image
 from core.utils import is_float

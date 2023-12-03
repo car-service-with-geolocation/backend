@@ -432,7 +432,6 @@ class Feedback(models.Model):
         'Дата публикации отзыва',
         auto_now_add=True,
     )
-
     class Meta:
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
@@ -442,6 +441,11 @@ class Feedback(models.Model):
                 fields=['author', 'autoservice'], name='unique_feedback'
             )
         ]
-
     def __str__(self) -> str:
         return f'{self.text[:25]}'
+
+class Image(models.Model):
+    # Путь, куда будут загружаться изображения
+    image = models.ImageField(upload_to='feedback/images/')
+    # Связь с моделью Feedback
+    feedbacks = models.ManyToManyField(Feedback, related_name='images')

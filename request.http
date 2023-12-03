@@ -5,6 +5,9 @@
 @feedback = http://127.0.0.1:8000/api/v1/autoservice/service/1/feedback/
 @feedback_id = http://127.0.0.1:8000/api/v1/autoservice/service/1/feedback/1/
 @create_user = http://127.0.0.1:8000/api/v1/auth/users/
+@put_user = http://127.0.0.1:8000/api/v1/auth/users/me/
+@get_user_token = http://127.0.0.1:8000/api/v1/auth/token/login/
+@get_user_token1 = http://127.0.0.1:8000/api/v1/auth/api-token-auth/
 
 ###
 GET {{ service }} HTTP/1.1
@@ -35,7 +38,7 @@ POST {{ get_user_token }} HTTP/1.1
 content-type: application/json
 
 {
-    "username": "ap",
+    "email": "ap@mail.ru",
     "password": "qwe123"
 }
 
@@ -44,8 +47,8 @@ POST {{ get_user_token }} HTTP/1.1
 content-type: application/json
 
 {
-    "username": "apap",
-    "password": "qweqwe"
+  "email": "user123@example.com",
+  "password": "qwe1234"
 }
 
 ###
@@ -63,7 +66,19 @@ POST {{ create_user }} HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
-  "first_name": "string",
+  "email": "user1@example.com",
+  "first_name": "user",
   "password": "qwe123"
+}
+
+
+###
+PUT {{ put_user }} HTTP/1.1
+Content-Type: application/json
+Authorization: Token 18914c8f9b91a083c2e1a3f857dc46eabcc86b4a
+
+{
+  "email": "user123@example.com",
+  "first_name": "string",
+  "password": "qwe1234"
 }

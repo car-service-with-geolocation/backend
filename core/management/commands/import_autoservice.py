@@ -56,88 +56,90 @@ class Command(BaseCommand):
             )
 
             #  Создаем WorkTimeRange.
-            value_days = value[9]
+            if value[9]:
+                value_days = value[9]
 
-            monday = value_days['Понедельник']
-            if monday != 'Выходной':
-                start_time, end_time = monday.split(" – ")
-                monday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                monday_work = None
+                monday = value_days['Понедельник']
+                if monday != 'Выходной':
+                    start_time, end_time = monday.split(" – ")
+                    monday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    monday_work = None
 
-            tuesday = value_days['Вторник']
-            if tuesday != 'Выходной':
-                start_time, end_time = tuesday.split(" – ")
-                tuesday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                tuesday_work = None
+                tuesday = value_days['Вторник']
+                if tuesday != 'Выходной':
+                    start_time, end_time = tuesday.split(" – ")
+                    tuesday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    tuesday_work = None
 
-            wednesday = value_days['Среда']
-            if wednesday != 'Выходной':
-                start_time, end_time = wednesday.split(" – ")
-                wednesday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                wednesday_work = None
+                wednesday = value_days['Среда']
+                if wednesday != 'Выходной':
+                    start_time, end_time = wednesday.split(" – ")
+                    wednesday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    wednesday_work = None
 
-            thursday = value_days['Четверг']
-            if thursday != 'Выходной':
-                start_time, end_time = thursday.split(" – ")
-                thursday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                thursday_work = None
+                thursday = value_days['Четверг']
+                if thursday != 'Выходной':
+                    start_time, end_time = thursday.split(" – ")
+                    thursday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    thursday_work = None
 
-            friday = value_days['Пятница']
-            if friday != 'Выходной':
-                start_time, end_time = friday.split(" – ")
-                friday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                friday_work = None
+                friday = value_days['Пятница']
+                if friday != 'Выходной':
+                    start_time, end_time = friday.split(" – ")
+                    friday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    friday_work = None
 
-            saturday = value_days['Суббота']
-            if saturday != 'Выходной':
-                start_time, end_time = saturday.split(" – ")
-                saturday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                saturday_work = None
+                saturday = value_days['Суббота']
+                if saturday != 'Выходной':
+                    start_time, end_time = saturday.split(" – ")
+                    saturday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    saturday_work = None
 
-            sunday = value_days['Воскресенье']
-            if sunday != 'Выходной':
-                start_time, end_time = sunday.split(" – ")
-                sunday_work, created = WorkTimeRange.objects.get_or_create(
-                    openfrom=start_time,
-                    openuntil=end_time
-                )
-            else:
-                sunday_work = None
+                sunday = value_days['Воскресенье']
+                if sunday != 'Выходной':
+                    start_time, end_time = sunday.split(" – ")
+                    sunday_work, created = WorkTimeRange.objects.get_or_create(
+                        openfrom=start_time,
+                        openuntil=end_time
+                    )
+                else:
+                    sunday_work = None
 
             #  Создаем WorkingTime.
-            workingtime, created = WorkingTime.objects.get_or_create(
-                monday=monday_work,
-                tuesday=tuesday_work,
-                wednesday=wednesday_work,
-                thursday=thursday_work,
-                friday=friday_work,
-                saturday=saturday_work,
-                sunday=sunday_work,
-            )
+            if value[9]:
+                workingtime, created = WorkingTime.objects.get_or_create(
+                    monday=monday_work,
+                    tuesday=tuesday_work,
+                    wednesday=wednesday_work,
+                    thursday=thursday_work,
+                    friday=friday_work,
+                    saturday=saturday_work,
+                    sunday=sunday_work,
+                )
 
             #  Создаем AutoService.
             if value[2]:
@@ -154,15 +156,25 @@ class Command(BaseCommand):
                 phone_number = None
             if not value[3]:
                 value[3] = 'Москва'
-            avtoservice, created = AutoService.objects.get_or_create(
-                company=company,
-                address=value[3],
-                geolocation=geolocation,
-                city=City.objects.get(id=507),
-                working_time=workingtime,
-                phone_number=phone_number,
-                site=value[4]
-            )
+            if value[9]:
+                avtoservice, created = AutoService.objects.get_or_create(
+                    company=company,
+                    address=value[3],
+                    geolocation=geolocation,
+                    city=City.objects.get(id=507),
+                    working_time=workingtime,
+                    phone_number=phone_number,
+                    site=value[4]
+                )
+            else:
+                avtoservice, created = AutoService.objects.get_or_create(
+                    company=company,
+                    address=value[3],
+                    geolocation=geolocation,
+                    city=City.objects.get(id=507),
+                    phone_number=phone_number,
+                    site=value[4]
+                )
 
             #  Создаем Job.
             for item in value[6]:

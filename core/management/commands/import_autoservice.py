@@ -42,11 +42,14 @@ class Command(BaseCommand):
                 description=description_social
             )
             if created and value[8]:
-                with open(
-                    f'static/data/logo_autoservice/{name_avtoservice}.jpg',
-                        'rb') as file:
-                    image = ImageFile(file)
-                    company.logo.save(f'{name_avtoservice}.jpg', image)
+                try:
+                    with open(
+                        f'static/data/logo_autoservice/{name_avtoservice}.jpg',
+                            'rb') as file:
+                        image = ImageFile(file)
+                        company.logo.save(f'{name_avtoservice}.jpg', image)
+                except:
+                    pass
 
             #  Создаем GeolocationAutoService.
             geolocation, created = (

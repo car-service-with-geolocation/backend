@@ -101,36 +101,23 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 
 )
 class CustomUserViewSet(UserViewSet):
-
-    #Вьюсет предоставляет весь функционал CRUD для модели CustomUser
-    #Вьюсет наследует стандартный UserViewSet из Djoser с последующим
-    #переопределением метода create для регистрации пользователей по номеру
-    #телефона.
-
-    serializer = CustomUserSerializer
+    """
+    Вьюсет предоставляет весь функционал CRUD для модели CustomUser
+    Вьюсет наследует стандартный UserViewSet из Djoser с последующим
+    переопределением метода create для регистрации пользователей по номеру
+    телефона.
+    """
 
     def create(self, request, *args, **kwargs):
-        registration_by_phone = request.data.get('phone_number', None)
-        registration_by_email = request.data.get('email', None)
-
-        #if registration_by_phone:
-        #    serializer = CustomUserSerializer(data=request.data)
-        #    if serializer.is_valid():
-        #        serializer.save()
-        #        return Response(serializer.data,
-        #                        status=status.HTTP_201_CREATED)
-        #    else:
-        #        return Response(serializer.errors,
-        #                        status=status.HTTP_400_BAD_REQUEST)
+        registration_by_phone = request.data.get("phone_number", None)
+        registration_by_email = request.data.get("email", None)
 
         if registration_by_email:
             return super().create(request, *args, **kwargs)
 
-        return Response({'error': 'Invalid registration method'},
-                        status=status.HTTP_400_BAD_REQUEST)
-
-    # def perform_create(self, serializer):
-        # TODO
+        return Response(
+            {"error": "Invalid registration method"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @extend_schema(

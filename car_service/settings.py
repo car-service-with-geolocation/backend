@@ -125,7 +125,7 @@ SPECTACULAR_SETTINGS = {
 DJOSER = {
     "SERIALIZERS": {
         'user': 'api.v1.users.serializers.CustomUserSerializer',
-        'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+        'current_user': 'api.v1.users.serializers.CustomCurrentUserSerializer',
         'user_create': 'api.v1.users.serializers.CustomUserSerializer',
         'user_create_password_retype': 'api.v1.users.serializers.CustomUserSerializer'
     },

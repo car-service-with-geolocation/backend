@@ -23,6 +23,27 @@ class OrderListAPIView(generics.ListCreateAPIView):
         serializer.validated_data['user'] = self.request.user
         serializer.save()
 
+
+@extend_schema(
+    tags=["Заказы"],
+    methods=["POST", "GET"],
+    description="API для управления списком заказов.",
+)
+@extend_schema_view(
+    get=extend_schema(
+        description="Получить список заказов текущего пользователя",
+        summary="Получить данные текущего пользователя",
+    ),
+)
+class CurrentUserOrderListAPIView(generics.ListCreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Order.objects.filter(owner=self.request.user)
+        return queryset
+
+
 @extend_schema(
     tags=["Заказы"],
     methods=["GET", "PUT", "PATCH", "DELETE"],

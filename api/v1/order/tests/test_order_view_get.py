@@ -2,13 +2,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient, APIRequestFactory
 
-from autoservice.models import AutoService, Company, Job
-from core.management.commands.import_autoservice import (
-    Command as CreateAutoserviciesCommand,
-)
-from core.management.commands.import_city import Command as CreateCitiesCommand
-from order.models import Order
-from users.models import CustomUser
+import api.v1.order.tests.setup_test_db as db_setup
 
 test_user = {
     "email": "test_user@example.ru",
@@ -17,6 +11,8 @@ test_user = {
     "phone_number": "+79345432643",
 }
 test_autoservice_data_path = "autoservice_short_list.json"
+test_cities_data_path = "russia_city_short_list.csv"
+test_user_data_path = "user_short_list.json"
 test_order = {
     "car": "LADA",
     "info": "INFO",
@@ -30,29 +26,19 @@ test_order = {
 
 class TestGetAllFieldsFromOrderListAPIView(TestCase):
     def setUp(self) -> None:
-        CreateCitiesCommand().handle()
-        CreateAutoserviciesCommand().handle(test_autoservice_data_path)
+        db_setup.fill_db_data(test_autoservice_data_path)
+        company = db_setup.get_company(test_order["company"])
+        job = db_setup.get_jobs()
+        autoservice = db_setup.get_autoservice_by_company(company=company)
 
-        job = Job.objects.filter(title="предрейсовый техосмотр")
-        company = Company.objects.get(title=test_order["company"])
-        autoservice = AutoService.objects.get(company=company)
+        self.user = db_setup.get_or_create_user(test_user)
 
-        self.user, _ = CustomUser.objects.get_or_create(
-            email=test_user["email"],
-            first_name=test_user["first_name"],
-            password=test_user["password"],
-        )
-
-        self.order, _ = Order.objects.get_or_create(
-            owner=self.user,
-            car=test_order["car"],
-            info=test_order["info"],
-            task=test_order["task"],
-            image=test_order["image"],
-            status=test_order["status"],
+        self.order = db_setup.get_or_create_order(
+            test_order,
+            user=self.user,
             autoservice=autoservice,
+            job=job
         )
-        self.order.jobs.set(job)
 
         self.factory = APIRequestFactory()
 

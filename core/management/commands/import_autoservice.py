@@ -167,7 +167,7 @@ class Command(BaseCommand):
                     company=company,
                     address=value[3],
                     geolocation=geolocation,
-                    city=City.objects.get(id=507),
+                    city=City.objects.get(id=2),
                     working_time=workingtime,
                     phone_number=phone_number,
                     site=value[4]
@@ -177,7 +177,7 @@ class Command(BaseCommand):
                     company=company,
                     address=value[3],
                     geolocation=geolocation,
-                    city=City.objects.get(id=507),
+                    city=City.objects.get(id=2),
                     phone_number=phone_number,
                     site=value[4]
                 )

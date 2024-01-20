@@ -21,8 +21,11 @@ def process_file(name: str):
 
 class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-        data = process_file('avtoservice.json')
+    def handle(self, avtoservices_json=None, *args, **options):
+        if avtoservices_json:
+            data = process_file(avtoservices_json)
+        else:
+            data = process_file('avtoservice.json')
         count = 1
         for name_avtoservice, value in data.items():
             print(f'----{count}-----{name_avtoservice}-------пробую загрузить')

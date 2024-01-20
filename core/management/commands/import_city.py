@@ -11,8 +11,11 @@ class Command(BaseCommand):
     """
     Импорт данных городов РФ из CSV файла.
     """
-    def handle(self, *args, **options):
-        csv: reader = process_file('russia_city.csv')
+    def handle(self, cities_csv=None, *args, **options):
+        if cities_csv:
+            csv = process_file(cities_csv)
+        else:
+            csv = process_file('russia_city.csv')
         next(csv, None)
 
         for row in csv:

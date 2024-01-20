@@ -20,8 +20,11 @@ def process_file(name: str):
 
 class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-        data = process_file('user.json')
+    def handle(self, user_json=None, *args, **options):
+        if user_json:
+            data = process_file(user_json)
+        else:
+            data = process_file('user.json')
         for email, value in data.items():
             User.objects.get_or_create(
                 email=email,

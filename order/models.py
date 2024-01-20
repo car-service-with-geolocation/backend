@@ -2,13 +2,18 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from autoservice.models import Job
+from autoservice.models import Job, AutoService
 
 User = get_user_model()
 
 
 class Order(models.Model):
     """Модель заявки для авторизованного пользователя"""
+    STATUSES = [
+        ("OPENED", "открыта"),
+        ("COMPLETED", "выполнена"),
+        ("CANCELED", "отменена"),
+    ]
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -39,6 +44,19 @@ class Order(models.Model):
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',
         auto_now_add=True,
+    )
+    status = models.CharField(
+        max_length=20,
+        verbose_name="Статус заявки",
+        choices=STATUSES,
+        default=STATUSES[0][0],
+    )
+    autoservice = models.ForeignKey(
+        AutoService,
+        related_name='orders',
+        verbose_name='Автосервис',
+        on_delete=models.SET_NULL,
+        null=True
     )
 
     class Meta:

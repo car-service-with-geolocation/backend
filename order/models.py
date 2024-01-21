@@ -36,11 +36,6 @@ class Order(models.Model):
         related_name='orders',
         verbose_name='Работы'
     )
-    image = models.ImageField(
-        'Фото поломки',
-        upload_to='order/images/',
-        null=True,
-    )
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',
         auto_now_add=True,

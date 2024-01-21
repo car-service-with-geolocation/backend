@@ -30,7 +30,7 @@ class OrderListAPIView(generics.ListCreateAPIView):
 
 @extend_schema(
     tags=["Заказы"],
-    methods=["POST", "GET"],
+    methods=["GET"],
     description="API для управления списком заказов.",
 )
 @extend_schema_view(

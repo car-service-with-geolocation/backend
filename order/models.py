@@ -64,7 +64,7 @@ class Order(models.Model):
 
 
 class OrderImages(models.Model):
-    file = (
+    image = (
         models.ImageField(
             "Фото поломки",
             upload_to="order/images/",
@@ -88,4 +88,4 @@ class OrderImages(models.Model):
         verbose_name_plural = "Фото поломки",
 
     def __str__(self) -> str:
-        return f'{self.file}-{self.upload_date}'
+        return f'{self.image}-{self.upload_date}'

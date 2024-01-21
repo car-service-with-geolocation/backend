@@ -14,7 +14,7 @@ test_autoservice_data_path = "autoservice_short_list.json"
 test_cities_data_path = "russia_city_short_list.csv"
 test_user_data_path = "user_short_list.json"
 test_order = {
-    "car": "LADA",
+"car": "LADA",
     "info": "INFO",
     "task": "TASK",
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
@@ -60,3 +60,31 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
         number_of_current_user_orders = 1
         response = self.client.get("/api/v1/orders/me/", format="json")
         self.assertEqual(number_of_current_user_orders, len(response.data))
+
+
+class TestPostCurrentUserOrderListAPIView(TestCase):
+    def setUp(self) -> None:
+        db_setup.fill_db_data(test_autoservice_data_path)
+        company = db_setup.get_company(test_order["company"])
+        job = db_setup.get_jobs()
+        autoservice = db_setup.get_autoservice_by_company(company=company)
+
+        self.user = db_setup.get_or_create_user(test_user)
+
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+        self.post_order = {
+            "owner": 1,
+            "car": "LADA",
+            "info": "INFO",
+            "task": "TASK",
+            "status": "OPENED",
+            "autoservice": 1,
+        }
+
+    def test_current_user_list_api_view_get_status_code_200(self):
+        response = self.client.post(
+            "/api/v1/orders/me/", format="json", data=self.post_order
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

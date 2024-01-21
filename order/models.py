@@ -25,16 +25,18 @@ class Order(models.Model):
     )
     info = models.CharField(
         max_length=settings.MAX_LENGTH_INFO,
-        verbose_name='Важная информация'
+        verbose_name='Важная информация',
+        null=True,
     )
     task = models.CharField(
         max_length=settings.MAX_LENGTH_TASK,
-        verbose_name='Что случилось'
+        verbose_name='Что случилось',
+        null=True,
     )
     jobs = models.ManyToManyField(
         Job,
         related_name='orders',
-        verbose_name='Работы'
+        verbose_name='Работы',
     )
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',

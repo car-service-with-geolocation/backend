@@ -66,3 +66,31 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.owner} - {self.car},{self.task}'
+
+
+class OrderImages(models.Model):
+    file = (
+        models.ImageField(
+            "Фото поломки",
+            upload_to="order/images/",
+            null=True,
+        ),
+    )
+    upload_date = models.DateTimeField(
+        "Дата загрузки",
+        auto_now_add=True,
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        verbose_name="Заказ",
+        related_name="images",
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = "Фото поломки",
+        verbose_name_plural = "Фото поломки",
+
+    def __str__(self) -> str:
+        return f'{self.file}-{self.upload_date}'

@@ -1,6 +1,8 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from order.models import Order
 
@@ -46,6 +48,22 @@ class CurrentUserOrderListAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Order.objects.filter(owner=self.request.user)
         return queryset
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        return super().post(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data["owner"] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        if serializer.validated_data.get("user", None):
+            serializer.validated_data.pop("user")
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
 
 @extend_schema(

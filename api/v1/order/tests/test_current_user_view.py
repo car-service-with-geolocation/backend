@@ -14,7 +14,7 @@ test_autoservice_data_path = "autoservice_short_list.json"
 test_cities_data_path = "russia_city_short_list.csv"
 test_user_data_path = "user_short_list.json"
 test_order = {
-"car": "LADA",
+    "car": "LADA",
     "info": "INFO",
     "task": "TASK",
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
@@ -74,17 +74,49 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-        self.post_order = {
-            "owner": 1,
-            "car": "LADA",
-            "info": "INFO",
-            "task": "TASK",
-            "status": "OPENED",
-            "autoservice": 1,
-        }
+        self.post_order = [
+            {
+                "car": "LADA",
+                "info": "INFO",
+                "task": "TASK",
+                "status": "OPENED",
+                "jobs": [job[0].id],
+                "autoservice": autoservice.id,
+            },
+            # {
+            #     "car": "LADA",
+            #     "info": "INFO",
+            #     "task": "TASK",
+            #     "status": "OPENED",
+            #     "autoservice": autoservice.id,
+            # },
+            {
+                "car": "LADA",
+                "info": "INFO",
+                "task": "TASK",
+                "jobs": [job[0].id],
+                "autoservice": autoservice.id,
+            },
+            {
+                "car": "LADA",
+                "task": "TASK",
+                "status": "OPENED",
+                "jobs": [job[0].id],
+                "autoservice": autoservice.id,
+            },
+            {
+                "car": "LADA",
+                "info": "INFO",
+                "status": "OPENED",
+                "jobs": [job[0].id],
+                "autoservice": autoservice.id,
+            },
+        ]
 
     def test_current_user_list_api_view_get_status_code_200(self):
-        response = self.client.post(
-            "/api/v1/orders/me/", format="json", data=self.post_order
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        for post in self.post_order:
+            with self.subTest(msg=post):
+                response = self.client.post(
+                    "/api/v1/orders/me/", format="json", data=post
+                )
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)

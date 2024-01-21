@@ -20,7 +20,7 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 10,
+    "number_of_fields": 9,
 }
 
 

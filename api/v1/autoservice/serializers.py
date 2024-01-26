@@ -37,6 +37,19 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
+class CompanyShortSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для компаний автосервисов (с укороченным набором полей).
+    """
+    class Meta:
+        model = Company
+        fields = [
+            'id',
+            'title',
+            'logo',
+        ]
+
+
 class GeolocationAutoServiceSerializer(serializers.ModelSerializer):
     """
     Сериализатор для геолокации автосервиса.
@@ -99,11 +112,10 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
     """
     Сериализатор для списка автосервисов.
     """
-    company = CompanySerializer()
+    company = CompanyShortSerializer()
     geolocation = GeolocationAutoServiceSerializer()
     rating = serializers.FloatField(read_only=True)
     votes = serializers.IntegerField(read_only=True)
-    working_time = WorkTimeSerializer()
 
     class Meta:
         model = AutoService
@@ -114,7 +126,7 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'working_time',
+            'working_time_text',
         ]
 
 
@@ -158,19 +170,24 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         job = AutoserviceJob.objects.filter(service=obj)
         return AutoserviceJobSerializer(job, many=True).data
 
+
 class ImageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Image
         fields = ['id', 'image']
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Feedback.
     """
     # поле для изображений
-    images = ImageSerializer(many=True,required=False,help_text='Загрузите изображение (необязательно)')#read_only=True)
-
-
+    images = ImageSerializer(
+        many=True,
+        required=False,
+        help_text='Загрузите изображение (необязательно)'
+    )
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='email',
@@ -206,6 +223,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
 class JobsSerializer(serializers.ModelSerializer):
     """Сериализатор для работ автосервиса"""
+
     class Meta:
         model = Job
         fields = "__all__"

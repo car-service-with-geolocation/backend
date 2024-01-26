@@ -163,21 +163,27 @@ class Command(BaseCommand):
             if not value[3]:
                 value[3] = 'Москва'
             if value[9]:
+                working_time_text = ''
+                for day, time in value[9].items():
+                    working_time_text += f'{day}: {time}<br>'
                 avtoservice, created = AutoService.objects.get_or_create(
                     company=company,
                     address=value[3],
                     geolocation=geolocation,
                     city=City.objects.get(id=2),
                     working_time=workingtime,
+                    working_time_text=working_time_text,
                     phone_number=phone_number,
                     site=value[4]
                 )
             else:
+                working_time_text = 'Неуказано время работы'
                 avtoservice, created = AutoService.objects.get_or_create(
                     company=company,
                     address=value[3],
                     geolocation=geolocation,
                     city=City.objects.get(id=2),
+                    working_time_text=working_time_text,
                     phone_number=phone_number,
                     site=value[4]
                 )

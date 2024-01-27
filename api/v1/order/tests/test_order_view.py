@@ -20,7 +20,8 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 8,
+    "phone_number": "+79633114454",
+    "number_of_fields": 9,
 }
 
 

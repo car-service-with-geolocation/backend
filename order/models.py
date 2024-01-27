@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from django.core.validators import RegexValidator
 from autoservice.models import AutoService, Job
 
 User = get_user_model()
@@ -50,6 +51,18 @@ class Order(models.Model):
         verbose_name="Автосервис",
         on_delete=models.SET_NULL,
         null=True,
+    )
+    phone_number = models.CharField(
+        max_length=settings.PHONE_MAX_LENGTH,
+        blank=True,
+        null=True,
+        validators=[
+            RegexValidator(
+                r'^(\+7|8)[0-9]{10}$',
+                "Введите номер телефона в формате: '+79995553322'",
+            )
+        ],
+        help_text="Введите номер телефона",
     )
 
     class Meta:

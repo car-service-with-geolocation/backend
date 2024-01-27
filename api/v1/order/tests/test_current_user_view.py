@@ -24,7 +24,8 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 8,
+    "phone_number": "+79633114455",
+    "number_of_fields": 9,
 }
 
 another_user = {
@@ -95,6 +96,7 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
                 "status": "OPENED",
                 "jobs": [job[0].id],
                 "autoservice": autoservice.id,
+                "phone_number": "+79633114455",
             },
             {
                 "car": "LADA",
@@ -109,6 +111,7 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
                 "task": "TASK",
                 "jobs": [job[0].id],
                 "autoservice": autoservice.id,
+                "phone_number": "+79633114455",
             },
             {
                 "car": "LADA",
@@ -116,6 +119,7 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
                 "status": "OPENED",
                 "jobs": [job[0].id],
                 "autoservice": autoservice.id,
+                "phone_number": "+79633114455",
             },
             {
                 "car": "LADA",
@@ -123,6 +127,7 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
                 "status": "OPENED",
                 "jobs": [job[0].id],
                 "autoservice": autoservice.id,
+                "phone_number": "+79633114455",
             },
         ]
 

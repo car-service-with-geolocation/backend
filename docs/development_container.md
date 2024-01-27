@@ -76,7 +76,7 @@ docker exec -i car-dev-server python manage.py import_user
 Чтобы создать суперпользователя для проверки подлинности и использования Django Admin, вам нужно выполнить следующую команду:
 
 ```shell
-docker exec -i car-dev-server python manage.py createsuperuser
+docker exec -it car-dev-server python manage.py createsuperuser
 ```
 
 Для пользователя необходимо получить токен аутентификации и добавить его в заголовок вашего запроса в Postman. Для получения токена выполните следующую команду:

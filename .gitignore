@@ -139,3 +139,6 @@ db.sqlite3.bak
 
 #Static_files
 media/autoservice/images/logo/*
+
+# Local SSL certificates
+selftest*

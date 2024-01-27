@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'order.apps.OrderConfig'
 ]
+if DEVELOPMENT is True:
+    INSTALLED_APPS.append("django_extensions")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

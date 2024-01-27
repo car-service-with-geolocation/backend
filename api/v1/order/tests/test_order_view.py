@@ -1,6 +1,6 @@
 from django.test import TestCase
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory
 
 import api.v1.order.tests.setup_test_db as db_setup
 
@@ -20,14 +20,8 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 10,
-}
-
-another_user = {
-    "email": "another_user@example.ru",
-    "first_name": "another_user",
-    "password": "safadh3kla",
-    "phone_number": "+79842422643",
+    "phone_number": "+79633114454",
+    "number_of_fields": 9,
 }
 
 
@@ -44,19 +38,15 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
             test_order, user=self.user, autoservice=autoservice, job=job
         )
 
-        self.another_user = db_setup.get_or_create_user(another_user)
-        db_setup.get_or_create_order(
-            test_order, user=self.another_user, autoservice=autoservice, job=job
-        )
+        self.factory = APIRequestFactory()
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_current_user_list_api_view_get_status_code_200(self):
-        response = self.client.get("/api/v1/orders/me/", format="json")
+    def test_list_api_view_get_status_code_200(self):
+        response = self.client.get("/api/v1/orders/", format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_current_user_list_api_view_get_all_fields(self):
-        number_of_current_user_orders = 1
-        response = self.client.get("/api/v1/orders/me/", format="json")
-        self.assertEqual(number_of_current_user_orders, len(response.data))
+    def test_list_api_view_get_all_fields(self):
+        response = self.client.get("/api/v1/orders/", format="json")
+        self.assertEqual(test_order["number_of_fields"], len(response.data[0]))

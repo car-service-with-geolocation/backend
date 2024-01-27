@@ -50,7 +50,6 @@ def get_or_create_order(order_data: dict, user, autoservice, job):
         car=order_data["car"],
         info=order_data["info"],
         task=order_data["task"],
-        image=order_data["image"],
         status=order_data["status"],
         owner=user,
         autoservice=autoservice,

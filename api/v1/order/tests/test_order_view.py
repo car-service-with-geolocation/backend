@@ -20,7 +20,7 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 9,
+    "number_of_fields": 8,
 }
 
 
@@ -34,10 +34,7 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
         self.user = db_setup.get_or_create_user(test_user)
 
         self.order = db_setup.get_or_create_order(
-            test_order,
-            user=self.user,
-            autoservice=autoservice,
-            job=job
+            test_order, user=self.user, autoservice=autoservice, job=job
         )
 
         self.factory = APIRequestFactory()

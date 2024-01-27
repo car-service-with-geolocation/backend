@@ -1,8 +1,12 @@
+import io
+
 from django.test import TestCase
+from PIL import Image
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
 import api.v1.order.tests.setup_test_db as db_setup
+from order.models import OrderImages
 
 test_user = {
     "email": "test_user@example.ru",
@@ -20,7 +24,7 @@ test_order = {
     "image": "/media/autoservice/images/logo/9000RpM.jpg",
     "status": "OPENED",
     "company": "Сотта",
-    "number_of_fields": 9,
+    "number_of_fields": 8,
 }
 
 another_user = {
@@ -29,6 +33,15 @@ another_user = {
     "password": "safadh3kla",
     "phone_number": "+79842422643",
 }
+
+
+def generate_image_file():
+    file = io.BytesIO()
+    image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))
+    image.save(file, "png")
+    file.name = "test.png"
+    file.seek(0)
+    return file
 
 
 class TestGetAllFieldsFromOrderListAPIView(TestCase):
@@ -83,13 +96,13 @@ class TestPostCurrentUserOrderListAPIView(TestCase):
                 "jobs": [job[0].id],
                 "autoservice": autoservice.id,
             },
-            # {
-            #     "car": "LADA",
-            #     "info": "INFO",
-            #     "task": "TASK",
-            #     "status": "OPENED",
-            #     "autoservice": autoservice.id,
-            # },
+            {
+                "car": "LADA",
+                "info": "INFO",
+                "task": "TASK",
+                "status": "OPENED",
+                "autoservice": autoservice.id,
+            },
             {
                 "car": "LADA",
                 "info": "INFO",

@@ -1,12 +1,13 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from order.models import Order
+from order.models import Order, OrderImages
 
-from .serializers import OrderSerializer
+from .serializers import OrderImagesSerializer, OrderSerializer
 
 
 @extend_schema(
@@ -44,6 +45,7 @@ class OrderListAPIView(generics.ListCreateAPIView):
 class CurrentUserOrderListAPIView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    parser_class = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         queryset = Order.objects.filter(owner=self.request.user)
@@ -55,11 +57,12 @@ class CurrentUserOrderListAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data["owner"] = request.user.id
-        serializer = self.get_serializer(data=data)
+        file_fields = list(request.FILES.keys())
+
+        serializer = self.get_serializer(data=data, file_fields=file_fields)
         serializer.is_valid(raise_exception=True)
-        if serializer.validated_data.get("user", None):
-            serializer.validated_data.pop("user")
         self.perform_create(serializer)
+
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers

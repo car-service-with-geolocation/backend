@@ -1,9 +1,10 @@
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import FileField
 
 from order.models import Order, OrderImages
 
@@ -33,13 +34,25 @@ class OrderListAPIView(generics.ListCreateAPIView):
 
 @extend_schema(
     tags=["Заказы"],
-    methods=["GET"],
-    description="API для управления списком заказов.",
+    methods=["GET", "POST"],
+    description="API для управления списком заказов текущего пользователя.",
 )
 @extend_schema_view(
     get=extend_schema(
         description="Получить список заказов текущего пользователя",
         summary="Получить данные текущего пользователя",
+    ),
+    post=extend_schema(
+        description="Создать новый заказ под текущим пользователем.",
+        summary="Создать новый заказ.",
+        parameters=[
+            OrderSerializer,
+            OpenApiParameter(
+                name="file_1",
+                description="Картинки в отдельных полях плоской структуры.",
+                required=False,
+            ),
+        ],
     ),
 )
 class CurrentUserOrderListAPIView(generics.ListCreateAPIView):

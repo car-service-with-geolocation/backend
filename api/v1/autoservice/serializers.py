@@ -1,3 +1,6 @@
+import datetime
+
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
@@ -8,24 +11,24 @@ from autoservice.models import (
     Company,
     Feedback,
     GeolocationAutoService,
+    Image,
     Job,
     Transport,
-    WorkTimeRange,
-    WorkingTime, Image,
+    WorkingTime
 )
 
 
 class TransportsSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка брендов/моделей автомобилей"""
+    """Сериализатор для списка брендов (моделей) автомобилей."""
+
     class Meta:
         model = Transport
         fields = ('id', 'brand')
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для компаний автосервисов.
-    """
+    """Сериализатор для компаний автосервисов."""
+
     class Meta:
         model = Company
         fields = [
@@ -37,19 +40,29 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
+class CompanyShortSerializer(serializers.ModelSerializer):
+    """Сериализатор для компаний автосервисов
+    (Необходим для списка автосервисов).
+    """
+
+    class Meta:
+        model = Company
+        fields = [
+            'title',
+            'logo'
+        ]
+
+
 class GeolocationAutoServiceSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для геолокации автосервиса.
-    """
+    """Сериализатор для геолокации автосервиса."""
+
     class Meta:
         model = GeolocationAutoService
         fields = ['latitude', 'longitude']
 
 
 class AutoserviceJobSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для работ автосервисов и их прайс.
-    """
+    """Сериализатор для работ автосервисов и их прайс."""
     id = serializers.IntegerField(source='job.id', read_only=True)
     title = serializers.CharField(source='job.title', read_only=True)
 
@@ -62,48 +75,25 @@ class AutoserviceJobSerializer(serializers.ModelSerializer):
         ]
 
 
-class WorkTimeRangeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = WorkTimeRange
-        fields = [
-            'openfrom',
-            'openuntil',
-        ]
-
-
 class WorkTimeSerializer(serializers.ModelSerializer):
-
-    monday = WorkTimeRangeSerializer()
-    tuesday = WorkTimeRangeSerializer()
-    wednesday = WorkTimeRangeSerializer()
-    thursday = WorkTimeRangeSerializer()
-    friday = WorkTimeRangeSerializer()
-    saturday = WorkTimeRangeSerializer()
-    sunday = WorkTimeRangeSerializer()
+    """Сериализатор для графиков работ автосервисов."""
 
     class Meta:
         model = WorkingTime
         fields = [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
+            'id',
+            'day',
+            'time',
         ]
 
 
 class ListAutoServiceSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для списка автосервисов.
-    """
-    company = CompanySerializer()
+    """Сериализатор для списка автосервисов."""
+    company = CompanyShortSerializer()
     geolocation = GeolocationAutoServiceSerializer()
     rating = serializers.FloatField(read_only=True)
     votes = serializers.IntegerField(read_only=True)
-    working_time = WorkTimeSerializer()
+    working_time_today = serializers.SerializerMethodField()
 
     class Meta:
         model = AutoService
@@ -114,14 +104,31 @@ class ListAutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'working_time',
+            'working_time_today',
         ]
+
+    def get_working_time_today(self, obj: AutoService) -> str:
+        """
+        Функция возвращает график работы автосервиса в определенный (текущий)
+        день недели (сегодня).
+        Принимает экземпляр автосервиса в качестве аргумента и выводит
+        'сегодняшний' график работы этого автосервиса.
+        Параметры:
+        obj (AutoService): Экземпляр автосервиса, на который нужно вывести
+        график работы на 'сегодня'.
+        Возвращает:
+        str: График работы автосервиса (сегодня).
+        """
+        current_time = datetime.datetime.now()
+        number_day_of_week = current_time.weekday()
+        working_days_in_current_autoservices = obj.working_time.all()
+        for item in working_days_in_current_autoservices:
+            if item.day == settings.NUMBER_WEEK[number_day_of_week]:
+                return f'{item.day}: {item.time}'
 
 
 class AutoServiceSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор автосервиса.
-    """
+    """Сериализатор автосервиса."""
     company = CompanySerializer()
     geolocation = GeolocationAutoServiceSerializer()
     city = serializers.SlugRelatedField(
@@ -129,9 +136,8 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         queryset=City.objects.all()
     )
     car_service = TransportsSerializer(many=True)
-    working_time = WorkTimeSerializer()
+    working_time = WorkTimeSerializer(many=True)
     job = serializers.SerializerMethodField()
-
     rating = serializers.FloatField(read_only=True)
     votes = serializers.IntegerField(read_only=True)
 
@@ -145,7 +151,6 @@ class AutoServiceSerializer(serializers.ModelSerializer):
             'address',
             'rating',
             'votes',
-            'working_time_text',
             'working_time',
             'phone_number',
             'email',
@@ -158,19 +163,22 @@ class AutoServiceSerializer(serializers.ModelSerializer):
         job = AutoserviceJob.objects.filter(service=obj)
         return AutoserviceJobSerializer(job, many=True).data
 
+
 class ImageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Image
         fields = ['id', 'image']
 
+
 class FeedbackSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для модели Feedback.
-    """
+    """Сериализатор для модели Feedback."""
     # поле для изображений
-    images = ImageSerializer(many=True,required=False,help_text='Загрузите изображение (необязательно)')#read_only=True)
-
-
+    images = ImageSerializer(
+        many=True,
+        required=False,
+        help_text='Загрузите изображение (необязательно)'
+    )
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='email',
@@ -205,7 +213,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
 
 
 class JobsSerializer(serializers.ModelSerializer):
-    """Сериализатор для работ автосервиса"""
+    """Сериализатор для работ автосервиса."""
     class Meta:
         model = Job
         fields = "__all__"

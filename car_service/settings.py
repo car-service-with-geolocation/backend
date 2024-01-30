@@ -222,3 +222,14 @@ LAST_NAME_MAX_LENGTH = 40
 MAX_LENGTH_INFO = 200
 MAX_LENGTH_TASK = 200
 MAX_LENGTH_CAR = 50
+
+# Other constants
+NUMBER_WEEK = {
+    0: 'Понедельник',
+    1: 'Вторник',
+    2: 'Среда',
+    3: 'Четверг',
+    4: 'Пятница',
+    5: 'Суббота',
+    6: 'Воскресенье',
+}

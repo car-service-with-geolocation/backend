@@ -11,7 +11,6 @@ from autoservice.models import (
     Job,
     Transport,
     WorkingTime,
-    WorkTimeRange,
 )
 
 
@@ -89,7 +88,6 @@ admin.site.register(City, CityAdmin)
 admin.site.register(Feedback)
 admin.site.register(Job)
 admin.site.register(Transport)
-admin.site.register(WorkTimeRange)
 admin.site.register(WorkingTime)
 admin.site.register(
     GeolocationAutoService,

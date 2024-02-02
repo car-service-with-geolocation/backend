@@ -65,6 +65,7 @@ docker compose -f docker-compose.dev.yml up -d
 Для миграции базы данных выполните команды:
 
 ```shell
+docker exec -i car-dev-server python manage.py makemigrations
 docker exec -i car-dev-server python manage.py migrate
 docker exec -i car-dev-server python manage.py import_city
 docker exec -i car-dev-server python manage.py import_autoservice

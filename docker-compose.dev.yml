@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  dev-server:
+    container_name: car-dev-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file: ./.env
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app

@@ -25,6 +25,7 @@ jobs:
         context: ./
         push: true
         tags: apashovkin48/car_service_backend:latest
+        target: production
   
   deploy:
     runs-on: ubuntu-latest

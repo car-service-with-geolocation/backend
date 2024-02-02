@@ -13,10 +13,7 @@ User = get_user_model()
 
 
 class Transport(models.Model):
-    """
-    Модель для базы данных брендов/моделей авто
-    """
-
+    """Модель брендов (моделей) автомобилей."""
     brand = models.CharField(
         max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
         verbose_name='Название бренда'
@@ -31,122 +28,51 @@ class Transport(models.Model):
         return f'{self.brand}'
 
 
-class WorkTimeRange(models.Model):
-    """
-    Модель, показывающая интервал рабочего времени за день.
-    """
-    openfrom = models.CharField(
-        verbose_name='Начало работы',
-        null=True,
-        blank=False,
-        max_length=settings.WORKING_TIME_MAX_LENGTH,
-        help_text=(
-            'Введите время начала рабочего дня автосервиса в формате HH:MM'
-        ),
-        validators=[
-           RegexValidator(
-               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
-               'Используйте время в формате HH:MM',
-           )
-        ],
-    )
-    openuntil = models.CharField(
-        verbose_name='Окончание рабочего дня',
-        null=True,
-        blank=False,
-        max_length=settings.WORKING_TIME_MAX_LENGTH,
-        help_text=(
-            'Введите время окончания рабочего дня автосервиса в формате HH:MM'
-        ),
-        validators=[
-           RegexValidator(
-               r'^(?:[01]\d|2[0-3]):[0-5]\d$',
-               'Используйте время в формате HH:MM',
-           )
-        ],
-    )
-
-    def __str__(self) -> str:
-        return f"{self.openfrom} - {self.openuntil}"
-
-    class Meta:
-        verbose_name = "диапазон рабочего времени"
-        verbose_name_plural = "Диапазон рабочего времени"
-
-
 class WorkingTime(models.Model):
-    """
-    Модель описывающая график рабочего времени за неделю.
-    """
-    monday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='monday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в понедельник",
+    """Модель - режим работы автосервиса в определенный день недели."""
+    DAY_CHOICES = (
+        ('Monday', 'Понедельник'),
+        ('Tuesday', 'Вторник'),
+        ('Wednesday', 'Среда'),
+        ('Thursday', 'Четверг'),
+        ('Friday', 'Пятница'),
+        ('Saturday', 'Суббота'),
+        ('Sunday', 'Воскресенье')
     )
-    tuesday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='tuesday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы во вторник",
+    day = models.CharField(
+        max_length=9,
+        choices=DAY_CHOICES,
+        verbose_name='День недели'
     )
-    wednesday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='wednesday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в среду",
+    time = models.CharField(
+        max_length=13,
+        verbose_name='Время работы в определенный день недели',
+        validators=[
+            RegexValidator(
+                regex=r'^(\d{2}:\d{2} - \d{2}:\d{2}|Выходной)$',
+                message=(
+                    'Введите время в формате "ЧЧ:ММ - ЧЧ:ММ" или "Выходной".'
+                )
+            )
+        ]
     )
-    thursday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='thursday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в четверг",
-    )
-    friday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='friday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в пятницу",
-    )
-    saturday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='saturday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в субботу",
-    )
-    sunday = models.ForeignKey(
-        WorkTimeRange,
-        null=True,
-        blank=True,
-        related_name='sunday',
-        on_delete=models.SET_NULL,
-        verbose_name="Время работы в воскресенье",
-    )
-
-    def __str__(self) -> str:
-        return f"Рабочий график {self.id}"
 
     class Meta:
-        verbose_name = "рабочий график"
-        verbose_name_plural = "Рабочие графики"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['day', 'time'],
+                name='unique_day_time'
+            )
+        ]
+        verbose_name = 'Режим работы в определенный день недели'
+        verbose_name_plural = 'Режимы работы в определенные дни недели'
+
+    def __str__(self) -> str:
+        return f'Режим работы {self.id}'
 
 
 class GeolocationCity(models.Model):
-    """
-    Модель с геолокацией городов.
-    """
+    """Модель с геолокацией городов."""
     latitude = models.FloatField(
         verbose_name="Значение северной широты на карте",
     )
@@ -158,7 +84,7 @@ class GeolocationCity(models.Model):
         return f"{self.latitude} - {self.longitude}"
 
     class Meta:
-        verbose_name = "геолокацию"
+        verbose_name = "Геолокация"
         verbose_name_plural = "Геолокация городов РФ"
         constraints = [
             models.UniqueConstraint(
@@ -252,9 +178,7 @@ class GeolocationAutoService(models.Model):
 
 
 class Job(models.Model):
-    """
-    Модель работ выполняемых автосервисами.
-    """
+    """Модель работ выполняемых автосервисами."""
     title = models.CharField(
         max_length=settings.MAX_LENGTH_JOBS_NAME,
         verbose_name='Название работы',
@@ -271,9 +195,7 @@ class Job(models.Model):
 
 
 class AutoService(models.Model):
-    """
-    Модель автосервиса.
-    """
+    """Модель автосервиса."""
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -297,18 +219,11 @@ class AutoService(models.Model):
         verbose_name='Город',
         help_text='Укажите город'
     )
-    working_time_text = models.CharField(
-        max_length=settings.DEFAULT_MAXLEN_CHARFIELD,
-        verbose_name="Текстовое описание рабочего времени",
-        blank=True,
-        null=True,
-    )
-    working_time = models.ForeignKey(
+    working_time = models.ManyToManyField(
         WorkingTime,
-        null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        help_text='График работы автосервиса'
+        help_text='График работы автосервиса',
+        related_name='autoservices'
     )
     phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
@@ -356,16 +271,14 @@ class AutoService(models.Model):
 
     class Meta:
         verbose_name = "Автосервис"
-        verbose_name_plural = "Автосервис"
+        verbose_name_plural = "Автосервисы"
 
     def __str__(self):
         return f"{self.company.title} - {self.geolocation}"
 
 
 class AutoserviceJob(models.Model):
-    """
-    Модель для связи модели автосервиса и модели работы.
-    """
+    """Модель для связи модели автосервиса и модели работы."""
     service = models.ForeignKey(
         AutoService,
         on_delete=models.CASCADE,
@@ -391,7 +304,7 @@ class AutoserviceJob(models.Model):
         return f'{self.job.title} — {self.price}'
 
     class Meta:
-        verbose_name = "работу"
+        verbose_name = "Работа"
         verbose_name_plural = "Работы и прайсы автосервисов"
         constraints = [
             models.UniqueConstraint(
@@ -432,6 +345,7 @@ class Feedback(models.Model):
         'Дата публикации отзыва',
         auto_now_add=True,
     )
+
     class Meta:
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
@@ -441,8 +355,10 @@ class Feedback(models.Model):
                 fields=['author', 'autoservice'], name='unique_feedback'
             )
         ]
+
     def __str__(self) -> str:
         return f'{self.text[:25]}'
+
 
 class Image(models.Model):
     # Путь, куда будут загружаться изображения

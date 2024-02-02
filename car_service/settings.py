@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'order.apps.OrderConfig'
 ]
+if DEVELOPMENT is True:
+    INSTALLED_APPS.append("django_extensions")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -125,7 +127,7 @@ SPECTACULAR_SETTINGS = {
 DJOSER = {
     "SERIALIZERS": {
         'user': 'api.v1.users.serializers.CustomUserSerializer',
-        'current_user': 'api.v1.users.serializers.CustomUserSerializer',
+        'current_user': 'api.v1.users.serializers.CustomCurrentUserSerializer',
         'user_create': 'api.v1.users.serializers.CustomUserSerializer',
         'user_create_password_retype': 'api.v1.users.serializers.CustomUserSerializer'
     },
@@ -220,3 +222,14 @@ LAST_NAME_MAX_LENGTH = 40
 MAX_LENGTH_INFO = 200
 MAX_LENGTH_TASK = 200
 MAX_LENGTH_CAR = 50
+
+# Other constants
+NUMBER_WEEK = {
+    0: 'Понедельник',
+    1: 'Вторник',
+    2: 'Среда',
+    3: 'Четверг',
+    4: 'Пятница',
+    5: 'Суббота',
+    6: 'Воскресенье',
+}

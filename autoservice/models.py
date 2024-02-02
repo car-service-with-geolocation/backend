@@ -14,65 +14,65 @@ User = get_user_model()
 
 class Transport(models.Model):
     """Модель брендов (моделей) автомобилей."""
+
     brand = models.CharField(
         max_length=settings.MAX_LENGTH_TRANSPORT_BRAND,
-        verbose_name='Название бренда'
+        verbose_name="Название бренда",
     )
 
     class Meta:
-        ordering = ('brand', )
-        verbose_name = 'Бренд'
-        verbose_name_plural = 'Бренды'
+        ordering = ("brand",)
+        verbose_name = "Бренд"
+        verbose_name_plural = "Бренды"
 
     def __str__(self):
-        return f'{self.brand}'
+        return f"{self.brand}"
 
 
 class WorkingTime(models.Model):
     """Модель - режим работы автосервиса в определенный день недели."""
+
     DAY_CHOICES = (
-        ('Monday', 'Понедельник'),
-        ('Tuesday', 'Вторник'),
-        ('Wednesday', 'Среда'),
-        ('Thursday', 'Четверг'),
-        ('Friday', 'Пятница'),
-        ('Saturday', 'Суббота'),
-        ('Sunday', 'Воскресенье')
+        ("Monday", "Понедельник"),
+        ("Tuesday", "Вторник"),
+        ("Wednesday", "Среда"),
+        ("Thursday", "Четверг"),
+        ("Friday", "Пятница"),
+        ("Saturday", "Суббота"),
+        ("Sunday", "Воскресенье"),
     )
     day = models.CharField(
-        max_length=9,
-        choices=DAY_CHOICES,
-        verbose_name='День недели'
+        max_length=255, choices=DAY_CHOICES, verbose_name="День недели"
     )
     time = models.CharField(
-        max_length=13,
-        verbose_name='Время работы в определенный день недели',
+        max_length=255,
+        verbose_name="Время работы в определенный день недели",
         validators=[
             RegexValidator(
-                regex=r'^(\d{2}:\d{2} - \d{2}:\d{2}|Выходной)$',
+                regex=r"^(\d{2}:\d{2} - \d{2}:\d{2}|Выходной)$",
                 message=(
                     'Введите время в формате "ЧЧ:ММ - ЧЧ:ММ" или "Выходной".'
-                )
+                ),
             )
-        ]
+        ],
     )
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['day', 'time'],
-                name='unique_day_time'
+                fields=["day", "time"], name="unique_day_time"
             )
         ]
-        verbose_name = 'Режим работы в определенный день недели'
-        verbose_name_plural = 'Режимы работы в определенные дни недели'
+        verbose_name = "Режим работы в определенный день недели"
+        verbose_name_plural = "Режимы работы в определенные дни недели"
 
     def __str__(self) -> str:
-        return f'Режим работы {self.id}'
+        return f"Режим работы {self.id}"
 
 
 class GeolocationCity(models.Model):
     """Модель с геолокацией городов."""
+
     latitude = models.FloatField(
         verbose_name="Значение северной широты на карте",
     )

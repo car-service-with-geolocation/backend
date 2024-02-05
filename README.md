@@ -69,7 +69,7 @@ ImageField не получится, как лучше реализовать э�
 - address
 - geolocation
 - city
-- working_time_text
+- working_time
 - phone_number
 - email
 - site

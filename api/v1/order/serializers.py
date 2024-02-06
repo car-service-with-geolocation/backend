@@ -13,6 +13,7 @@ class OrderImagesSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    аutoservice_name = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         file_fields = kwargs.pop("file_fields", None)
@@ -35,6 +36,10 @@ class OrderSerializer(serializers.ModelSerializer):
         for file in validated_files:
             OrderImages.objects.create(order=order_instance, file=file)
         return order_instance
+
+    def get_аutoservice_name(self, obj: Order) -> str:
+        autoservice_name = obj.autoservice.company.title
+        return autoservice_name
 
     class Meta:
         model = Order

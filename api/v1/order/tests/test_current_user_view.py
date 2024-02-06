@@ -65,15 +65,14 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+        self.response = self.client.get("/api/v1/orders/me/", format="json")
 
     def test_current_user_list_api_view_get_status_code_200(self):
-        response = self.client.get("/api/v1/orders/me/", format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
 
     def test_current_user_list_api_view_get_all_fields(self):
         number_of_current_user_orders = 1
-        response = self.client.get("/api/v1/orders/me/", format="json")
-        self.assertEqual(number_of_current_user_orders, len(response.data))
+        self.assertEqual(number_of_current_user_orders, len(self.response.data))
 
 
 class TestPostCurrentUserOrderListAPIView(TestCase):

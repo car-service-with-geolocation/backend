@@ -25,7 +25,7 @@ test_order = {
     "status": "OPENED",
     "company": "Сотта",
     "phone_number": "+79633114455",
-    "number_of_fields": 9,
+    "number_of_fields": 10,
 }
 
 another_user = {
@@ -73,6 +73,11 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
     def test_current_user_list_api_view_get_all_fields(self):
         number_of_current_user_orders = 1
         self.assertEqual(number_of_current_user_orders, len(self.response.data))
+
+    def test_list_api_view_get_autoservice_name(self):
+        self.assertEqual(
+            test_order["company"], self.response.data[0]["аutoservice_name"]
+        )
 
 
 class TestPostCurrentUserOrderListAPIView(TestCase):

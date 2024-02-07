@@ -21,7 +21,7 @@ test_order = {
     "status": "OPENED",
     "company": "Сотта",
     "phone_number": "+79633114454",
-    "number_of_fields": 9,
+    "number_of_fields": 10,
 }
 
 
@@ -42,11 +42,15 @@ class TestGetAllFieldsFromOrderListAPIView(TestCase):
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+        self.response = self.client.get("/api/v1/orders/", format="json")
 
     def test_list_api_view_get_status_code_200(self):
-        response = self.client.get("/api/v1/orders/", format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
 
     def test_list_api_view_get_all_fields(self):
-        response = self.client.get("/api/v1/orders/", format="json")
-        self.assertEqual(test_order["number_of_fields"], len(response.data[0]))
+        self.assertEqual(test_order["number_of_fields"], len(self.response.data[0]))
+
+    def test_list_api_view_get_autoservice_name(self):
+        self.assertEqual(
+            test_order["company"], self.response.data[0]["аutoservice_name"]
+        )

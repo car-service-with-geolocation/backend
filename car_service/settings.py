@@ -233,3 +233,6 @@ NUMBER_WEEK = {
     5: 'Суббота',
     6: 'Воскресенье',
 }
+
+# File upload settints
+FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400

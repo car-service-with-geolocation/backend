@@ -51,7 +51,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/.*$'
+if DEVELOPMENT is False:
+    CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'car_service.urls'
 

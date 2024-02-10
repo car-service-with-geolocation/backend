@@ -18,14 +18,6 @@ urlpatterns = [
          CustomUserActivation.as_view(),
          name='user_activation'
          ),
-    # path('token/login/',
-    #      TokenCreateView.as_view(),
-    #      name='login'
-    #      ),
-    # path('token/logout/',
-    #      TokenDestroyView.as_view(),
-    #      name='logout'
-    #      ),
     path('token/login/',
          extend_schema_view(post=extend_schema(tags=["Пользователь"],
                                                 description = "Выполняет запрос для авторизации пользователя",

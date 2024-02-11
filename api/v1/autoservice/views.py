@@ -8,14 +8,20 @@ from django.db.models.functions import (
     Sqrt
 )
 from django_filters.rest_framework import DjangoFilterBackend
+from copy import copy
+from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import filters, generics, mixins, viewsets
+from rest_framework import filters, generics, mixins, status, viewsets
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from api.v1.users.serializers import CustomUserSerializer
 
 from autoservice.models import AutoService, Company, Job, Transport, Image
+from api.v1.users.views import CustomUserViewSet
 from core.utils import is_float
 from .filters import TransportsFilter, JobsFilter
+from users.models import CustomUser
 from .serializers import (
     AutoServiceSerializer,
     CompanySerializer,
@@ -232,3 +238,151 @@ class JobsList(generics.ListAPIView):
 class JobsDetail(generics.RetrieveAPIView):
     queryset = Job.objects.all()
     serializer_class = JobsSerializer
+
+
+@extend_schema(
+    tags=["Владелец компании"],
+    methods=["POST", "GET", "PATCH", "DELETE", "PUT"],
+    description="Управление компанией как её владелец"
+)
+@extend_schema_view(
+    create=extend_schema(
+        tags=["Владелец компании"],
+        description="Создание пользователя",
+        summary="Создание пользователя",
+    ),
+    list=extend_schema(
+        tags=["Владелец компании"],
+        description="Получение списка пользователей",
+        summary="Получение списка пользователей",
+    ),
+    retrieve=extend_schema(
+        tags=["Владелец компании"],
+        description="Получение информации о пользователе",
+        summary="Получение информации о пользователе",
+    ),
+    update=extend_schema(
+        tags=["Владелец компании"],
+        description="Обновление информации о пользователе",
+        summary="Обновление информации о пользователе",
+    ),
+    partial_update=extend_schema(
+        tags=["Владелец компании"],
+        description="Частичное обновление информации о пользователе",
+        summary="Частичное обновление информации о пользователе",
+    ),
+    destroy=extend_schema(
+        tags=["Владелец компании"],
+        description="Удаление пользователя",
+        summary="Удаление пользователя",
+    ),
+    activation=extend_schema(
+        tags=["Владелец компании"],
+        description="Активация пользователя по uid и token",
+        summary="Активация пользователя",
+    ),
+    me=[
+        extend_schema(
+            tags=["Владелец компании"],
+            description="Получение информации о текущем пользователе",
+            summary="Получение информации о текущем пользователе",
+            methods=["GET"],
+        ),
+        extend_schema(
+            tags=["Владелец компании"],
+            description="Изменение информации о текущем пользователе",
+            summary="Изменение информации о текущем пользователе",
+            methods=["PUT"],
+        ),
+        extend_schema(
+            tags=["Владелец компании"],
+            description="Частичное обновление информации о текущем пользователе",
+            summary="Частичное обновление информации о текущем пользователе",
+            methods=["PATCH"],
+        ),
+        extend_schema(
+            tags=["Владелец компании"],
+            description="Удаление текущего пользователя",
+            summary="Удаление текущего пользователя",
+            methods=["DELETE"],
+        ),
+    ],
+    resend_activation=extend_schema(
+        tags=["Владелец компании"],
+        description="Запрос на повторное отправление кода активации",
+        summary="Повторная отправка кода активации",
+    ),
+    reset_password=extend_schema(
+        tags=["Владелец компании"],
+        description="Запрос на сброс пароля пользователя",
+        summary="Сброс пароля пользователя",
+    ),
+    reset_password_confirm=extend_schema(
+        tags=["Владелец компании"],
+        description="Подтверждение сброса пароля пользователя",
+        summary=" Подтверждение сброса пароля",
+    ),
+    reset_username=extend_schema(
+        tags=["Владелец компании"],
+        description="Запрос на смену имени пользователя",
+        summary="Смена имени пользователя",
+    ),
+    reset_username_confirm=extend_schema(
+        tags=["Владелец компании"],
+        description="Подтверждение смены имени пользователя",
+        summary="Подтверждение смены имени пользователя",
+    ),
+    set_password=extend_schema(
+        tags=["Владелец компании"],
+        description="Установка нового пароля пользователя",
+        summary="Установка нового пароля",
+    ),
+    set_username=extend_schema(
+        tags=["Владелец компании"],
+        description="Установка нового имени пользователя.",
+        summary="Установка нового имени пользователя",
+    ),
+)
+class CompanyOwnerViewset(CustomUserViewSet):
+    """
+    Вьюсет предоставляет функционал для регистрации пользователя
+    в качестве владельца компании автосервиса. Вьюсет создает
+    пользоаателя, добавляет его в группу владельцев автосервиса,
+    создает Компанию и устанавливает ее владельца
+    """
+
+    company_serializer_class = CompanySerializer
+
+    def create(self, request, *args, **kwargs):
+        response: Response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED:
+            user = self.get_user_from_response(response)
+            self.user_add_group(user)
+            self.create_company(request, user=user, *args, **kwargs)
+        return response
+
+    def get_user_from_response(self, response: Response) -> CustomUser:
+        user_id = response.data.get("id")
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist as e:
+            print(f"user with id {user_id} does not exist", e)
+            raise CustomUser.DoesNotExist from e
+        return user
+
+    def user_add_group(self, user: CustomUser):
+        group, _ = Group.objects.get_or_create(name='company_owners')
+        user.groups.add(group)
+        user.save()
+
+    def create_company(self, request, *args, user: CustomUser, **kwargs) -> Response:
+        data = {}
+        data['title'] = request.data.get("company_name")
+        data['description'] = request.data.get("description")
+        data['legal_address'] = request.data.get("legal_address")
+        data["owner"] = user.id
+        serializer = self.company_serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

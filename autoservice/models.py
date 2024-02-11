@@ -8,6 +8,8 @@ from django.core.validators import (
 )
 from django.db import models
 
+from users.models import CustomUser
+
 
 User = get_user_model()
 
@@ -144,6 +146,13 @@ class Company(models.Model):
         null=True,
         max_length=250,
         verbose_name="Юридический адрес",
+    )
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.PROTECT,
+        verbose_name="Владелец компании",
+        help_text="Укажите владельца компании",
+        related_name="company",
     )
 
     class Meta:

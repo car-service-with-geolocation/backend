@@ -37,6 +37,7 @@ class CompanySerializer(serializers.ModelSerializer):
             'description',
             'logo',
             'legal_address',
+            'owner',
         ]
 
 

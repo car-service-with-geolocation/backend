@@ -41,6 +41,17 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
+class CompanyRegistrationSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации компаний автосервисов."""
+
+    class Meta:
+        model = Company
+        fields = [
+            "title",
+            "legal_address",
+            "taxpayer_id",
+        ]
+
 class CompanyShortSerializer(serializers.ModelSerializer):
     """Сериализатор для компаний автосервисов
     (Необходим для списка автосервисов).

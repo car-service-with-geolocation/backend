@@ -1,14 +1,15 @@
 from typing import Callable
+
+import requests
 from django.shortcuts import redirect
 from djoser.views import UserViewSet
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import status
-import requests
 from rest_framework.decorators import action, permission_classes
-from api.v1.autoservice.serializers import CompanyRegistrationSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from api.v1.autoservice.serializers import CompanyRegistrationSerializer
 from api.v1.users.exceptions import InvalidRegistrationMethodException
 
 from .serializers import CompanyOwnerSerializer, CustomUserSerializer
@@ -196,8 +197,8 @@ class CustomUserViewSet(UserViewSet):
     get=extend_schema(
         tags=["Пользователь"],
         description="""Эндпоинт используется для активации пользователя.
-                                    При переходе по этой ссылке пользователь будет автоматически активирован передайте
-                                    uid и token""",
+                       При переходе по этой ссылке пользователь будет автоматически
+                       активирован передайте uid и token""",
         summary="Активация пользователя",
     ),
 )
@@ -214,9 +215,7 @@ class CustomUserActivation(APIView):
         )
 
         if response.status_code == 204:
-            return Response(
-                {"message": "User activation successful"}, status=200
-            )
+            return Response({"message": "User activation successful"}, status=200)
         elif response.status_code == 200:
             try:
                 response_data = response.json()
@@ -228,8 +227,6 @@ class CustomUserActivation(APIView):
                 )
         else:
             return Response(
-                {
-                    "error": f"Request failed with status code {response.status_code}"
-                },
+                {"error": f"Request failed with status code {response.status_code}"},
                 status=response.status_code,
             )

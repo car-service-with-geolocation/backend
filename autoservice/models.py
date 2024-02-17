@@ -7,6 +7,7 @@ from django.core.validators import (
     RegexValidator,
 )
 from django.db import models
+from core.validators import validate_all_isdigit
 
 from users.models import CustomUser
 
@@ -147,12 +148,19 @@ class Company(models.Model):
         max_length=250,
         verbose_name="Юридический адрес",
     )
+    taxpayer_id = models.CharField(
+        "ИНН юридического лица",
+        max_length=10,
+        null=False,
+        validators=[validate_all_isdigit],
+    )
     owner = models.ForeignKey(
         CustomUser,
         on_delete=models.PROTECT,
         verbose_name="Владелец компании",
         help_text="Укажите владельца компании",
         related_name="company",
+        null=True,
     )
 
     class Meta:

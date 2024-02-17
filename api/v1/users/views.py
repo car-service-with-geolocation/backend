@@ -3,13 +3,15 @@ from django.shortcuts import redirect
 from djoser.views import UserViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import status
 import requests
+from rest_framework.decorators import action, permission_classes
+from api.v1.autoservice.serializers import CompanyRegistrationSerializer
 
-from .serializers import CustomUserSerializer
 from api.v1.users.exceptions import InvalidRegistrationMethodException
 
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from .serializers import CompanyOwnerSerializer, CustomUserSerializer
 
 
 @extend_schema(
@@ -142,7 +144,48 @@ class CustomUserViewSet(UserViewSet):
         else:
             raise InvalidRegistrationMethodException
 
+    @extend_schema(
+        description="Регистрирует пользователя в качестве владельца автосервиса. \
+                     Создает компанию юрлицо владельца автосервиса.",
+        parameters=[
+            CompanyOwnerSerializer,
+        ],
+        request=CompanyOwnerSerializer,
+        responses={201: CompanyOwnerSerializer, 400: None},
+        methods=["POST"],
+    )
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="create-companyowner",
+        url_name="create_companyowner",
+        permission_classes=[],
+    )
+    def create_companyowner(self, request, *args, **kwargs):
+        user_serializer = self.get_serializer(data=request.data.get("owner"))
+        user_serializer.is_valid(raise_exception=True)
+        self.perform_create(user_serializer)
+
+        owner = user_serializer.instance
+        if isinstance(user_serializer, CustomUserSerializer):
+            user_serializer.add_company_owners_group(owner)
+        else:
+            print(f"can't company_owners_group to {owner} of type {type(owner)}")
+            print(f"user {owner} of type {type(owner)} is created")
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        company_serializer = CompanyRegistrationSerializer(
+            data=request.data.get("company")
         )
+        company_serializer.is_valid(raise_exception=True)
+        company = company_serializer.save()
+        company.owner = owner
+        company.save()
+
+        data = {"owner": user_serializer.data, "company": company_serializer.data}
+
+        headers = self.get_success_headers(company_serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 @extend_schema(

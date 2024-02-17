@@ -49,3 +49,14 @@ exclude = [
     "management"
 ]
 max-complexity = 10
+
+[tool.pyright]
+include = []
+exclude = [".pytest_cache",
+    "**/__pycache__",
+]
+pythonVersion = "3.9.18"
+typeCheckingMode = "standard"
+
+[tool.black]
+line-length = 88

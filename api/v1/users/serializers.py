@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Group
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
@@ -33,6 +34,11 @@ class CustomUserSerializer(UserSerializer):
         validated_data['password'] = make_password(
             validated_data.get('password'))
         return super(UserSerializer, self).update(instance, validated_data)
+
+    def add_company_owners_group(self, instance):
+        group, _ = Group.objects.get_or_create(name='company_owners')
+        instance.groups.add(group)
+        instance.save()
 
 
 class CustomCurrentUserSerializer(UserSerializer):

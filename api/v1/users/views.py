@@ -1,11 +1,10 @@
 from typing import Callable
 
 import requests
-from django.shortcuts import redirect
 from djoser.views import UserViewSet
-from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,7 +17,6 @@ from .serializers import CompanyOwnerSerializer, CustomUserSerializer
 @extend_schema(
     tags=["Пользователь"],
     methods=["POST", "GET", "PATCH", "DELETE", "PUT"],
-    #  description="API для управления списком заказов."
 )
 @extend_schema_view(
     create=extend_schema(

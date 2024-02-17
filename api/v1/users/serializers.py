@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from api.v1.autoservice.serializers import CompanyRegistrationSerializer
 
 from users.models import CustomUser
 
@@ -71,3 +72,8 @@ class CustomCurrentUserSerializer(UserSerializer):
             validated_data['password'] = make_password(
                 validated_data['password'])
         return super(UserSerializer, self).update(instance, validated_data)
+
+
+class CompanyOwnerSerializer(serializers.Serializer):
+    owner = CustomUserSerializer()
+    company = CompanyRegistrationSerializer()

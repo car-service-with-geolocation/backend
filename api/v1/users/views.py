@@ -1,3 +1,4 @@
+from typing import Callable
 from django.shortcuts import redirect
 from djoser.views import UserViewSet
 from rest_framework.views import APIView
@@ -6,6 +7,7 @@ from rest_framework import status
 import requests
 
 from .serializers import CustomUserSerializer
+from api.v1.users.exceptions import InvalidRegistrationMethodException
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
@@ -122,15 +124,24 @@ class CustomUserViewSet(UserViewSet):
     """
 
     def create(self, request, *args, **kwargs):
+        try:
+            registration_method = self.get_registration_method(request)
+            return registration_method(request, *args, **kwargs)
+        except InvalidRegistrationMethodException:
+            return Response(
+                {"error": "Invalid registration method"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get_registration_method(self, request, *args, **kwargs) -> Callable:
         registration_by_phone = request.data.get("phone_number", None)
         registration_by_email = request.data.get("email", None)
 
         if registration_by_email:
-            return super().create(request, *args, **kwargs)
+            return super().create
+        else:
+            raise InvalidRegistrationMethodException
 
-        return Response(
-            {"error": "Invalid registration method"},
-            status=status.HTTP_400_BAD_REQUEST,
         )
 
 

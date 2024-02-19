@@ -4,6 +4,14 @@ version = "0.1.0"
 description = "Веб-приложение для заказа услуг автосервиса с использованием геолокации."
 authors = ["Car Service <carservice@carservice.com>"]
 readme = "README.md"
+packages = [
+    { include = "api" },
+    { include = "autoservice" },
+    { include = "car_service" },
+    { include = "core" },
+    { include = "order" },
+    { include = "users" },
+]
 
 [tool.poetry.dependencies]
 python = "3.9.18"

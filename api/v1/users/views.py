@@ -1,19 +1,22 @@
-from django.shortcuts import redirect
-from djoser.views import UserViewSet
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from typing import Callable
+
 import requests
-
-from .serializers import CustomUserSerializer
-
+from djoser.views import UserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from api.v1.autoservice.serializers import CompanyRegistrationSerializer
+from api.v1.users.exceptions import InvalidRegistrationMethodException
+
+from .serializers import CompanyOwnerSerializer, CustomUserSerializer
 
 
 @extend_schema(
     tags=["Пользователь"],
     methods=["POST", "GET", "PATCH", "DELETE", "PUT"],
-    #  description="API для управления списком заказов."
 )
 @extend_schema_view(
     create=extend_schema(
@@ -122,16 +125,66 @@ class CustomUserViewSet(UserViewSet):
     """
 
     def create(self, request, *args, **kwargs):
+        try:
+            registration_method = self.get_registration_method(request)
+            return registration_method(request, *args, **kwargs)
+        except InvalidRegistrationMethodException:
+            return Response(
+                {"error": "Invalid registration method"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get_registration_method(self, request, *args, **kwargs) -> Callable:
         registration_by_phone = request.data.get("phone_number", None)
         registration_by_email = request.data.get("email", None)
 
         if registration_by_email:
-            return super().create(request, *args, **kwargs)
+            return super().create
+        else:
+            raise InvalidRegistrationMethodException
 
-        return Response(
-            {"error": "Invalid registration method"},
-            status=status.HTTP_400_BAD_REQUEST,
+    @extend_schema(
+        description="Регистрирует пользователя в качестве владельца автосервиса. \
+                     Создает компанию юрлицо владельца автосервиса.",
+        parameters=[
+            CompanyOwnerSerializer,
+        ],
+        request=CompanyOwnerSerializer,
+        responses={201: CompanyOwnerSerializer, 400: None},
+        methods=["POST"],
+    )
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="create-companyowner",
+        url_name="create_companyowner",
+        permission_classes=[],
+    )
+    def create_companyowner(self, request, *args, **kwargs):
+        user_serializer = self.get_serializer(data=request.data.get("owner"))
+        user_serializer.is_valid(raise_exception=True)
+        self.perform_create(user_serializer)
+
+        owner = user_serializer.instance
+        if isinstance(user_serializer, CustomUserSerializer):
+            user_serializer.add_company_owners_group(owner)
+        else:
+            print(f"can't company_owners_group to {owner} of type {type(owner)}")
+            print(f"user {owner} of type {type(owner)} is created")
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        company_serializer = CompanyRegistrationSerializer(
+            data=request.data.get("company")
         )
+        company_serializer.is_valid(raise_exception=True)
+        company = company_serializer.save()
+        company.owner = owner
+        company.save()
+
+        data = {"owner": user_serializer.data, "company": company_serializer.data}
+
+        headers = self.get_success_headers(company_serializer.data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 @extend_schema(
@@ -142,8 +195,8 @@ class CustomUserViewSet(UserViewSet):
     get=extend_schema(
         tags=["Пользователь"],
         description="""Эндпоинт используется для активации пользователя.
-                                    При переходе по этой ссылке пользователь будет автоматически активирован передайте
-                                    uid и token""",
+                       При переходе по этой ссылке пользователь будет автоматически
+                       активирован передайте uid и token""",
         summary="Активация пользователя",
     ),
 )
@@ -160,9 +213,7 @@ class CustomUserActivation(APIView):
         )
 
         if response.status_code == 204:
-            return Response(
-                {"message": "User activation successful"}, status=200
-            )
+            return Response({"message": "User activation successful"}, status=200)
         elif response.status_code == 200:
             try:
                 response_data = response.json()
@@ -174,8 +225,6 @@ class CustomUserActivation(APIView):
                 )
         else:
             return Response(
-                {
-                    "error": f"Request failed with status code {response.status_code}"
-                },
+                {"error": f"Request failed with status code {response.status_code}"},
                 status=response.status_code,
             )

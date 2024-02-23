@@ -1,0 +1,2 @@
+class InvalidRegistrationMethodException(Exception):
+    pass

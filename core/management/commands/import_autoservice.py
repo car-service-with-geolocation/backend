@@ -42,7 +42,9 @@ class Command(BaseCommand):
                 description_social = None
             company, created = Company.objects.get_or_create(
                 title=name_avtoservice,
-                description=description_social
+                description=description_social,
+                legal_address="Москва, Красная площадь, д.1",
+                taxpayer_id="0123456789"
             )
             if created and value[8]:
                 try:

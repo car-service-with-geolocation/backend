@@ -20,11 +20,6 @@ router.register(
     views.FeedbackViewSet,
     basename='feedback'
 )
-router.register(
-    r'companyowner',
-    views.CompanyOwnerViewset,
-    basename='companyowner'
-)
 
 urlpatterns = [
     path('car_models', TransportList.as_view(), name='transport-list'),

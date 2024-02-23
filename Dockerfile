@@ -3,6 +3,7 @@ FROM python:3.9.18-slim AS base
 ARG PYTHON_VERSION=3.9.18
 ARG APP_NAME="car_service_with_geolocation"
 ARG APP_PATH="/opt/$APP_NAME"
+ARG STATIC_PATH="/usr/local/lib/python3.9/site-packages/static/"
 
 # STAGING
 FROM base AS staging
@@ -76,7 +77,8 @@ COPY --from=build \
     $APP_PATH/manage.py \
     $APP_PATH/docker-entrypoint.sh \
     $APP_PATH
-COPY --from=build $APP_PATH/static $APP_PATH/static/
+COPY --from=build $APP_PATH/static $STATIC_PATH
+COPY --from=build $APP_PATH/static /static/
 RUN pip install $APP_NAME*.whl --constraint constraints.txt \
     && rm -f $APP_PATH/constraints.txt $APP_PATH/*.whl \
     && chmod +x $APP_PATH/docker-entrypoint.sh

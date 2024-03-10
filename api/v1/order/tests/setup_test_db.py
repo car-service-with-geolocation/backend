@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db.models import QuerySet
 
 from autoservice.models import AutoService, Company, Job
@@ -32,17 +33,24 @@ def get_company(title: str):
     return Company.objects.get(title=title)
 
 
+def get_or_create_company(company_data: dict):
+    company, _ = Company.objects.get_or_create(**company_data)
+    return company
+
+
 def get_autoservice_by_company(company: Company):
     return AutoService.objects.get(company=company)
 
 
-def get_or_create_user(user_data):
-    user, _ = CustomUser.objects.get_or_create(
-        email=user_data["email"],
-        first_name=user_data["first_name"],
-        password=user_data["password"],
-    )
+def get_or_create_user(user_data: dict):
+    user, _ = CustomUser.objects.get_or_create(**user_data)
     return user
+
+
+def add_user_to_group(user: CustomUser, group_name: str):
+    group, _ = Group.objects.get_or_create(name=group_name)
+    user.groups.add(group)
+    user.save()
 
 
 def get_or_create_order(order_data: dict, user, autoservice, job):

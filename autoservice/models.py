@@ -248,12 +248,7 @@ class AutoService(models.Model):
     )
     phone_number = models.CharField(
         max_length=settings.PHONE_MAX_LENGTH,
-        validators=[
-            RegexValidator(
-                r"^(\+7|8)[0-9]{10}$",
-                "Введите номер телефона в формате: '+79995553322'",
-            )
-        ],
+        validators=[phone_number_validator],
         help_text="Введите номер телефона",
         null=True,
         blank=True,

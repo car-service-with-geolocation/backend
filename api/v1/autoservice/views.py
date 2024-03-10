@@ -1,14 +1,17 @@
 from copy import copy
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AnonymousUser, Group
 from django.db.models import Avg, Count, F
 from django.db.models.functions import ASin, Cos, Power, Radians, Sin, Sqrt
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, generics, mixins, status, viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.v1.users.serializers import CustomUserSerializer
 from api.v1.users.views import CustomUserViewSet
@@ -20,6 +23,7 @@ from .filters import JobsFilter, TransportsFilter
 from .permissions import IsAuthorOrAdminReadOnly
 from .serializers import (
     AutoServiceSerializer,
+    CompanyOwnerSerializer,
     CompanySerializer,
     FeedbackSerializer,
     JobsSerializer,
@@ -84,6 +88,49 @@ class TransportDetail(generics.RetrieveAPIView):
 class CompanyViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+
+
+@extend_schema(
+    tags=["Владельцы компаний"],
+    methods=["GET"],
+)
+@extend_schema_view(
+    get=extend_schema(
+        summary="Получить детали владельца компании",
+        description="Получить детали владельца компании",
+        tags=["Владельцы компаний"],
+    ),
+)
+class CompanyOwnerView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CompanyOwnerSerializer
+
+    def get(self, request: Request, *args, **kwargs):
+        user = request.user
+        if isinstance(user, AnonymousUser):
+            return Response(status=status.HTTP_401_UNAUTHORIZED, data={})
+        else:
+            email = user.email
+        owner: CustomUser = CustomUser.objects.get(email=email)
+        first_name = owner.first_name
+        phone_number = owner.phone_number
+        company: Company = Company.objects.get(owner=owner)
+        taxpayer_id = company.taxpayer_id
+        data = {
+            "email": email,
+            "phone_number": phone_number,
+            "first_name": first_name,
+            "taxpayer_id": taxpayer_id,
+            "company": company,
+        }
+        company_owner_serializer = self.serializer_class(
+            data, context={"request": request}
+        )
+        return Response(
+            data=company_owner_serializer.data,
+            status=status.HTTP_200_OK,
+            content_type="text/json",
+        )
 
 
 @extend_schema(
@@ -171,7 +218,7 @@ class AutoServiceViewSet(
 @extend_schema_view(
     list=extend_schema(
         summary="Получить отзывы об автосервисе",
-        description="Получить список отзывыв об автосервисе необходимо указать id автосервиса",
+        description="Получить список отзывыв об автосервие необходимо указать id автосервиса",
         tags=["Отзывы"],
     ),
     create=extend_schema(

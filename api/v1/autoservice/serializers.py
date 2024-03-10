@@ -16,6 +16,7 @@ from autoservice.models import (
     Transport,
     WorkingTime,
 )
+from core.validators import phone_number_validator, validate_all_isdigit
 
 
 class TransportsSerializer(serializers.ModelSerializer):
@@ -52,6 +53,7 @@ class CompanyRegistrationSerializer(serializers.ModelSerializer):
             "taxpayer_id",
         ]
 
+
 class CompanyShortSerializer(serializers.ModelSerializer):
     """Сериализатор для компаний автосервисов
     (Необходим для списка автосервисов).
@@ -60,6 +62,34 @@ class CompanyShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = ["title", "logo"]
+
+
+class CompanyHyperlinkedSerializer(serializers.HyperlinkedModelSerializer):
+    """Сериализатор для компаний автосервисов."""
+
+    class Meta:
+        model = Company
+        fields = [
+            "url",
+            "title",
+            "description",
+            "logo",
+            "legal_address",
+            "owner",
+        ]
+
+
+class CompanyOwnerSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    phone_number = serializers.CharField(validators=[phone_number_validator])
+    first_name = serializers.CharField(max_length=settings.FIRST_NAME_MAX_LENGTH)
+    taxpayer_id = serializers.CharField(
+        max_length=10, validators=[validate_all_isdigit]
+    )
+    company = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(),
+        allow_null=True,
+    )
 
 
 class GeolocationAutoServiceSerializer(serializers.ModelSerializer):

@@ -1,16 +1,11 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.validators import ASCIIUsernameValidator
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-    RegexValidator,
-)
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from core.validators import validate_all_isdigit
 
+from core.validators import phone_number_validator, validate_all_isdigit
 from users.models import CustomUser
-
 
 User = get_user_model()
 
@@ -53,18 +48,14 @@ class WorkingTime(models.Model):
         validators=[
             RegexValidator(
                 regex=r"^(\d{2}:\d{2} - \d{2}:\d{2}|Выходной)$",
-                message=(
-                    'Введите время в формате "ЧЧ:ММ - ЧЧ:ММ" или "Выходной".'
-                ),
+                message=('Введите время в формате "ЧЧ:ММ - ЧЧ:ММ" или "Выходной".'),
             )
         ],
     )
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=["day", "time"], name="unique_day_time"
-            )
+            models.UniqueConstraint(fields=["day", "time"], name="unique_day_time")
         ]
         verbose_name = "Режим работы в определенный день недели"
         verbose_name_plural = "Режимы работы в определенные дни недели"
@@ -266,9 +257,7 @@ class AutoService(models.Model):
         max_length=settings.EMAIL_MAX_LENGTH,
         null=True,
         blank=True,
-        help_text=(
-            "Введите адрес сайта автосервиса в формате 'www.example.com'"
-        ),
+        help_text=("Введите адрес сайта автосервиса в формате 'www.example.com'"),
     )
     job = models.ManyToManyField(
         Job,

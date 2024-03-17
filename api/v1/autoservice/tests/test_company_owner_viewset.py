@@ -46,3 +46,14 @@ class TestCompanyOwnerGet(TestCase):
     def test_get_response_data(self) -> None:
         self.assertEqual(self.response.data["taxpayer_id"], test_company["taxpayer_id"])
         self.assertEqual(self.response.data["company"], 1)
+
+
+class TestCompanyOwnerPost(TestCase):
+    def setUp(self) -> None:
+        user = setup_initial_state_and_return_user(test_user, test_company, group_name)
+        self.client = APIClient()
+        self.client.force_authenticate(user=user)
+        self.response = self.client.post("/api/v1/autoservice/me/", format="json")
+
+    def test_post_status_code_201(self) -> None:
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)

@@ -24,13 +24,18 @@ test_company = {
 group_name = "company_owners"
 
 
+def setup_initial_state_and_return_user(user, company, group):
+    user_instance = get_or_create_user(user)
+    add_user_to_group(user_instance, group)
+    company_instance = get_or_create_company(company)
+    company_instance.owner = user_instance
+    company_instance.save()
+    return user_instance
+
+
 class TestCompanyOwnerGet(TestCase):
     def setUp(self) -> None:
-        user = get_or_create_user(test_user)
-        add_user_to_group(user, group_name)
-        company = get_or_create_company(test_company)
-        company.owner = user
-        company.save()
+        user = setup_initial_state_and_return_user(test_user, test_company, group_name)
         self.client = APIClient()
         self.client.force_authenticate(user=user)
         self.response = self.client.get("/api/v1/autoservice/me/", format="json")

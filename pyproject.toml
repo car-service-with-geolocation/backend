@@ -4,6 +4,14 @@ version = "0.1.0"
 description = "Веб-приложение для заказа услуг автосервиса с использованием геолокации."
 authors = ["Car Service <carservice@carservice.com>"]
 readme = "README.md"
+packages = [
+    { include = "api" },
+    { include = "autoservice" },
+    { include = "car_service" },
+    { include = "core" },
+    { include = "order" },
+    { include = "users" },
+]
 
 [tool.poetry.dependencies]
 python = "3.9.18"
@@ -19,9 +27,10 @@ gunicorn = "20.1.0"
 python-dotenv = "0.21.0"
 geoip2 = "2.9.0"
 pytz = "2023.3.post1"
+psycopg2-binary = "2.9.5"
 requests = "2.28.1"
 Pillow = "9.3.0"
-
+drf-extra-fields = "3.4.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

@@ -14,4 +14,4 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - .:/opt/car_service_with_geolocation/
